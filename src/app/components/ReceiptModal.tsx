@@ -236,13 +236,12 @@ export function ReceiptModal({
         >
           <motion.div
             key={`receipt-${selectedFlower.id}`}
-            initial={{ opacity: 0, y: 35, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 25, scale: 0.96 }}
+            initial={{ y: "-100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-100%" }}
             transition={{
-              type: "spring",
-              damping: 26,
-              stiffness: 300,
+              duration: 0.8,
+              ease: [0.16, 1, 0.3, 1], // snappy slide-down printing motion
             }}
             className="relative w-full flex flex-col"
             style={{
