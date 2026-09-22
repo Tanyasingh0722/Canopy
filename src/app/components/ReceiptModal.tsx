@@ -22,7 +22,18 @@ export function ReceiptModal({
   onClose,
   onDelete,
 }: ReceiptModalProps) {
-  const zigzagClip = useMemo(() => {
+  const zigzagClipPaper = useMemo(() => {
+    const pts: string[] = ["0% 0%", "100% 0%"];
+    const TEETH = 34;
+    for (let i = TEETH; i >= 0; i--) {
+      const xPct = ((i / TEETH) * 100).toFixed(2);
+      const yVal = i % 2 === 0 ? "100%" : "calc(100% - 6px)";
+      pts.push(`${xPct}% ${yVal}`);
+    }
+    return `polygon(${pts.join(", ")})`;
+  }, []);
+
+  const zigzagClipPrinter = useMemo(() => {
     const pts: string[] = ["0% 0%", "100% 0%"];
     const TEETH = 34;
     for (let i = TEETH; i >= 0; i--) {
@@ -55,61 +66,71 @@ export function ReceiptModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-[101] overflow-y-auto flex flex-col items-center no-scrollbar"
+      className="fixed inset-0 z-[101] flex flex-col items-center"
       style={{
-        paddingTop: "64px", // To give space above the receipt
-        paddingBottom: "48px",
         pointerEvents: "auto",
-        scrollbarWidth: "none",
-        msOverflowStyle: "none",
         background: "rgba(0,0,0,0.58)",
         backdropFilter: "blur(8px)",
         fontFamily: BODY,
       }}
     >
-      {/* RECEIPT WRAPPER */}
+      {/* PRINTER HEAD (fixed at very top) */}
       <div
-        className="relative w-full max-w-[420px] shrink-0 px-4"
+        className="absolute top-0 z-[110] w-full max-w-[420px] shrink-0"
+        style={{
+          filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
+        }}
       >
-        <div 
-          className="relative w-full rounded-t-md overflow-hidden flex flex-col"
+        <div
+          className="w-full h-[72px] flex items-center justify-between px-5 relative"
+          style={{
+            background: "#182622",
+            clipPath: zigzagClipPrinter,
+          }}
+        >
+          <div className="flex-1" />
+          <div className="flex items-center gap-2 flex-1 justify-center mb-1">
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN }} />
+            <p
+              style={{
+                fontFamily: HEAD,
+                color: "#FAFAFA",
+                fontSize: 14,
+                letterSpacing: "3px",
+                opacity: 0.9,
+              }}
+            >
+              CANOPY PRINTER
+            </p>
+          </div>
+          <div className="flex-1 flex justify-end mb-1">
+            <button 
+              onClick={onClose}
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
+              style={{ background: "rgba(255,255,255,0.15)" }}
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* SCROLLABLE RECEIPT WRAPPER */}
+      <div 
+        className="w-full max-w-[420px] h-full overflow-y-auto no-scrollbar relative"
+        style={{
+          paddingTop: "40px", // Starts under the printer head
+          paddingBottom: "48px",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        <div
+          className="relative w-full px-4 flex flex-col"
           style={{
             filter: "drop-shadow(0 16px 40px rgba(0,0,0,0.32))",
           }}
         >
-          {/* PRINTER HEAD (fixed at top of the paper block) */}
-          <div
-            className="w-full h-[64px] shrink-0 flex items-center justify-between px-5 relative z-50"
-            style={{
-              background: "#182622",
-            }}
-          >
-            <div className="flex-1" />
-            <div className="flex items-center gap-2 flex-1 justify-center">
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: GREEN }} />
-              <p
-                style={{
-                  fontFamily: HEAD,
-                  color: "#FAFAFA",
-                  fontSize: 16,
-                  letterSpacing: "3px",
-                  opacity: 0.9,
-                }}
-              >
-                CANOPY PRINTER
-              </p>
-            </div>
-            <div className="flex-1 flex justify-end">
-              <button 
-                onClick={onClose}
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
-                style={{ background: "rgba(255,255,255,0.15)" }}
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
-            </div>
-          </div>
-
           {/* TICKET PAPER */}
           <motion.div
             key={`receipt-${selectedFlower.id}`}
@@ -117,20 +138,20 @@ export function ReceiptModal({
             animate={{ y: "0%" }}
             exit={{ y: "-100%" }}
             transition={{
-              duration: 0.6,
-              ease: "easeOut",
+              duration: 0.8,
+              ease: [0.16, 1, 0.3, 1], // snappy out
             }}
             className="relative w-full flex flex-col"
             style={{
               background: "#F9F8F5",
-              clipPath: zigzagClip,
+              clipPath: zigzagClipPaper,
               paddingBottom: "24px",
               minHeight: "400px",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* CONTENT INSIDE PAPER */}
-            <div className="pt-10 px-8 pb-4">
+            <div className="pt-12 px-8 pb-4">
               
               {/* Optional Drawing */}
               {selectedFlower.drawing && (
@@ -150,7 +171,7 @@ export function ReceiptModal({
               )}
 
               {/* CURRENT STATE & STAMP */}
-              <div className="flex justify-between items-start mb-6">
+              <div className="flex justify-between items-start mb-6 relative">
                 <div>
                   <p
                     style={{
@@ -175,17 +196,19 @@ export function ReceiptModal({
                 </div>
                 <div
                   style={{
+                    position: "absolute",
+                    right: 0,
+                    top: 10,
                     transform: isBloomed ? "rotate(-6deg)" : "rotate(6deg)",
                     border: `2px solid ${isBloomed ? GREEN : RED}`,
                     color: isBloomed ? GREEN : RED,
                     padding: "6px 14px",
                     borderRadius: "4px",
                     fontFamily: HEAD,
-                    fontSize: 20,
+                    fontSize: 18,
                     letterSpacing: "0.15em",
                     textTransform: "uppercase",
                     opacity: 0.85,
-                    marginTop: 8,
                   }}
                 >
                   {isBloomed ? "APPROVED" : "REJECTED"}
@@ -199,7 +222,7 @@ export function ReceiptModal({
                 <p
                   style={{
                     fontFamily: HEAD,
-                    fontSize: 16,
+                    fontSize: 15,
                     color: TEAL,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
@@ -288,7 +311,7 @@ export function ReceiptModal({
                         <img
                           src={src}
                           alt=""
-                          className="w-16 h-16 object-cover"
+                          className="w-20 h-20 object-cover"
                         />
                       </div>
                     ))}
@@ -339,9 +362,9 @@ export function ReceiptModal({
               {/* Barcode and Branding */}
               <div className="flex flex-col items-center mt-10 mb-8">
                 <div
-                  className="flex gap-[3px] mb-6 h-[50px] w-full justify-center opacity-70"
+                  className="flex gap-[3px] mb-8 h-[80px] w-full justify-center opacity-70"
                 >
-                  {Array.from({ length: 48 }).map((_, i) => (
+                  {Array.from({ length: 60 }).map((_, i) => (
                     <div
                       key={i}
                       style={{
@@ -356,7 +379,7 @@ export function ReceiptModal({
                   style={{
                     fontFamily: HEAD,
                     fontStyle: "italic",
-                    fontSize: 16,
+                    fontSize: 15,
                     color: "rgba(28,46,42,0.6)",
                     marginBottom: 10,
                   }}
@@ -401,7 +424,7 @@ export function ReceiptModal({
                     border: `1.5px solid ${RULE}`,
                     color: TEAL,
                     fontFamily: HEAD,
-                    fontSize: 16,
+                    fontSize: 15,
                     letterSpacing: "0.08em",
                   }}
                 >
@@ -415,7 +438,7 @@ export function ReceiptModal({
                     background: TEAL,
                     color: "#FAFAFA",
                     fontFamily: HEAD,
-                    fontSize: 16,
+                    fontSize: 15,
                     letterSpacing: "0.08em",
                   }}
                 >
