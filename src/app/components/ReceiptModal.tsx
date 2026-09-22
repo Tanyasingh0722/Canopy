@@ -33,15 +33,18 @@ export function ReceiptModal({
     return `polygon(${pts.join(", ")})`;
   }, []);
 
-  const zigzagClipPrinter = useMemo(() => {
-    const pts: string[] = ["0% 0%", "100% 0%"];
+  const svgTeethPoints = useMemo(() => {
     const TEETH = 34;
-    for (let i = TEETH; i >= 0; i--) {
-      const xPct = ((i / TEETH) * 100).toFixed(2);
-      const yVal = i % 2 === 0 ? "100%" : "calc(100% - 6px)";
-      pts.push(`${xPct}% ${yVal}`);
+    const W = 420;
+    const H = 6;
+    const pts = ["0,0"];
+    for (let i = 0; i < TEETH; i++) {
+      const xMid = (((i + 0.5) / TEETH) * W).toFixed(2);
+      const xEnd = (((i + 1) / TEETH) * W).toFixed(2);
+      pts.push(`${xMid},${H}`);
+      pts.push(`${xEnd},0`);
     }
-    return `polygon(${pts.join(", ")})`;
+    return pts.join(" ");
   }, []);
 
   const dateObj = new Date(selectedFlower.date);
@@ -214,17 +217,13 @@ export function ReceiptModal({
         className="fixed inset-0 flex flex-col items-center pointer-events-none z-10"
         style={{ fontFamily: BODY }}
       >
-        {/* PRINTER HEAD (fixed at top, clean vector geometry without filter: drop-shadow) */}
+        {/* PRINTER HEAD (fixed at top, clean vector SVG geometry without CSS clip-path mask) */}
         <div
           className="w-full max-w-[420px] shrink-0 pointer-events-auto relative z-[110]"
         >
           <div
-            className="w-full h-[64px] flex items-center justify-between px-5 relative"
-            style={{
-              background: "#182622",
-              clipPath: zigzagClipPrinter,
-              WebkitClipPath: zigzagClipPrinter,
-            }}
+            className="w-full h-[58px] flex items-center justify-between px-5 relative"
+            style={{ background: "#182622" }}
           >
             <div className="flex-1" />
             <div className="flex items-center gap-2 flex-1 justify-center mb-1">
@@ -252,6 +251,18 @@ export function ReceiptModal({
               </button>
             </div>
           </div>
+          {/* Vector teeth strip: pure SVG vector polygon, zero CSS clip-path */}
+          <svg
+            viewBox="0 0 420 6"
+            className="w-full block"
+            style={{ height: 6, display: "block" }}
+            preserveAspectRatio="none"
+          >
+            <polygon
+              points={svgTeethPoints}
+              fill="#182622"
+            />
+          </svg>
         </div>
 
         {/* SCROLLABLE RECEIPT WRAPPER */}
