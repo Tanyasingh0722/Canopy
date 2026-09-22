@@ -25,6 +25,26 @@ export function ReceiptModal({
   entryNumber,
 }: ReceiptModalProps) {
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
+  const paperRef = useRef<HTMLDivElement>(null);
+  const [saving, setSaving] = useState(false);
+
+  const handleSaveTicket = async () => {
+    if (!paperRef.current) return;
+    setSaving(true);
+    try {
+      const { toPng } = await import("html-to-image");
+      const pixelRatio = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
+      const dataUrl = await toPng(paperRef.current, { cacheBust: true, pixelRatio });
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = `canopy-receipt-${selectedFlower.id}.png`;
+      link.click();
+    } catch (err) {
+      console.error("Failed to generate receipt image", err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const zigzagClipPaper = useMemo(() => {
     const pts: string[] = ["0% 0%", "100% 0%"];
@@ -245,6 +265,7 @@ export function ReceiptModal({
           }}
         >
           <div
+            ref={paperRef}
             className="relative w-full flex flex-col"
             style={{
               background: "#F9F8F5",
@@ -556,30 +577,31 @@ export function ReceiptModal({
                   <Trash2 strokeWidth={1.5} className="w-[18px] h-[18px]" />
                 </button>
 
-                <button
-                  onClick={() => {
-                    if (selectedFlower.drawing) {
+                {selectedFlower.drawing && (
+                  <button
+                    onClick={() => {
                       const link = document.createElement("a");
-                      link.href = selectedFlower.drawing;
+                      link.href = selectedFlower.drawing!;
                       link.download = `flower-${selectedFlower.id}.png`;
                       link.click();
-                    }
-                  }}
-                  className="flex-1 h-[44px] flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
-                  style={{
-                    background: "#FAF9F5",
-                    border: "1px solid #DCD7CE",
-                    color: "#1C2E2A",
-                    fontFamily: HEAD,
-                    fontSize: 14.5,
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  SAVE TICKET
-                </button>
+                    }}
+                    className="flex-1 h-[44px] flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
+                    style={{
+                      background: "#FAF9F5",
+                      border: "1px solid #DCD7CE",
+                      color: "#1C2E2A",
+                      fontFamily: HEAD,
+                      fontSize: 14.5,
+                      letterSpacing: "0.08em",
+                    }}
+                  >
+                    SAVE SKETCH
+                  </button>
+                )}
 
                 <button
-                  onClick={onClose}
+                  onClick={handleSaveTicket}
+                  disabled={saving}
                   className="flex-1 h-[44px] flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
                   style={{
                     background: TEAL,
@@ -587,9 +609,10 @@ export function ReceiptModal({
                     fontFamily: HEAD,
                     fontSize: 14.5,
                     letterSpacing: "0.08em",
+                    opacity: saving ? 0.7 : 1,
                   }}
                 >
-                  DISCARD
+                  {saving ? "SAVING..." : "SAVE TICKET"}
                 </button>
               </div>
             </div>
