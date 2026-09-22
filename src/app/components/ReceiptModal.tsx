@@ -27,6 +27,7 @@ export function ReceiptModal({
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
   const paperRef = useRef<HTMLDivElement>(null);
   const [saving, setSaving] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleSaveTicket = async () => {
     if (!paperRef.current) return;
@@ -34,16 +35,68 @@ export function ReceiptModal({
     try {
       const { toPng } = await import("html-to-image");
       const pixelRatio = Math.min(3, Math.max(2, window.devicePixelRatio || 2));
-      const dataUrl = await toPng(paperRef.current, { cacheBust: true, pixelRatio });
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = `canopy-receipt-${selectedFlower.id}.png`;
-      link.click();
+      const filter = (node: HTMLElement) => {
+        if (node?.id === 'receipt-actions' || node?.id === 'receipt-close-x') {
+          return false;
+        }
+        return true;
+      };
+
+      const opts = { cacheBust: true, pixelRatio, filter };
+      
+      const el = paperRef.current;
+      
+      // Preload images to prevent Safari from dropping them
+      const images = Array.from(el.querySelectorAll("img"));
+      await Promise.all(
+        images.map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              const done = () => resolve();
+              const timeout = setTimeout(done, 4000);
+              const finish = async () => {
+                try {
+                  if ((img as any).decode) await img.decode();
+                } catch {}
+                clearTimeout(timeout);
+                done();
+              };
+              if (img.complete && img.naturalWidth > 0) {
+                finish();
+              } else {
+                img.onload = finish;
+                img.onerror = () => {
+                  clearTimeout(timeout);
+                  done();
+                };
+              }
+            })
+        )
+      );
+
+      // Wait a few frames for layout to completely settle
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await new Promise((r) => setTimeout(r, 50)); // tiny explicit delay for mobile Safari
+
+      // Render multiple times for Safari iOS cache quirk
+      await toPng(el, opts);
+      await toPng(el, opts);
+      const dataUrl = await toPng(el, opts);
+      
+      setPreviewUrl(dataUrl);
     } catch (err) {
       console.error("Failed to generate receipt image", err);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDownload = () => {
+    if (!previewUrl) return;
+    const link = document.createElement("a");
+    link.href = previewUrl;
+    link.download = `canopy-receipt-${selectedFlower.id}.png`;
+    link.click();
   };
 
   const zigzagClipPaper = useMemo(() => {
@@ -293,6 +346,7 @@ export function ReceiptModal({
                 </span>
               </div>
               <button 
+                id="receipt-close-x"
                 onClick={onClose}
                 className="w-7 h-7 rounded-full flex items-center justify-center transition-colors hover:bg-black/10 active:scale-90"
                 style={{ background: "rgba(28,46,42,0.06)" }}
@@ -564,7 +618,7 @@ export function ReceiptModal({
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2.5 w-full mt-5">
+              <div id="receipt-actions" className="flex items-center gap-2.5 w-full mt-5">
                 <button
                   onClick={() => onDelete(selectedFlower.id)}
                   className="w-[44px] h-[44px] shrink-0 flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
@@ -619,6 +673,47 @@ export function ReceiptModal({
           </div>
         </motion.div>
       </div>
+
+      {/* Safari-safe Preview Overlay */}
+      {previewUrl && (
+        <div 
+          className="fixed inset-0 z-[1000] flex flex-col items-center justify-center p-6"
+          style={{ background: "rgba(28,46,42,0.9)", backdropFilter: "blur(10px)" }}
+          onClick={() => setPreviewUrl(null)}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="flex flex-col items-center max-w-[380px] w-full"
+          >
+            <button
+              onClick={() => setPreviewUrl(null)}
+              className="self-end mb-3 w-9 h-9 flex items-center justify-center rounded-full"
+              style={{ background: "rgba(250,250,250,0.2)" }}
+            >
+              <X className="w-5 h-5" style={{ color: "#FFF" }} />
+            </button>
+            <img 
+              src={previewUrl} 
+              alt="Receipt Preview" 
+              className="w-full rounded-xl mb-4 shadow-2xl"
+              style={{ maxHeight: "70vh", objectFit: "contain", background: "#F9F8F5" }}
+            />
+            <button
+              onClick={handleDownload}
+              className="w-full py-4 rounded-xl flex items-center justify-center transition-transform active:scale-95"
+              style={{ 
+                background: GREEN, 
+                color: "#FFFFFF", 
+                fontFamily: HEAD, 
+                fontSize: 16, 
+                letterSpacing: "0.08em" 
+              }}
+            >
+              SAVE TO PHOTOS
+            </button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
