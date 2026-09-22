@@ -214,8 +214,8 @@ export function ReceiptModal({
       className="fixed inset-0 z-[101] overflow-y-auto no-scrollbar flex flex-col items-center py-10 px-4"
       style={{
         background: "rgba(0,0,0,0.6)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
         overscrollBehaviorY: "contain",
         scrollbarWidth: "none",
         msOverflowStyle: "none",
@@ -228,21 +228,23 @@ export function ReceiptModal({
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
       >
-        <div
+        <motion.div
+          key={`receipt-${selectedFlower.id}`}
+          initial={{ y: -80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -50, opacity: 0 }}
+          transition={{
+            duration: 0.6,
+            ease: [0.16, 1, 0.3, 1], // snappy slide-down printing motion
+          }}
           className="relative w-full flex flex-col pointer-events-auto"
           style={{
+            isolation: "isolate",
+            willChange: "transform, opacity",
             filter: "drop-shadow(0 20px 48px rgba(0,0,0,0.32)) drop-shadow(0 4px 12px rgba(0,0,0,0.1))",
           }}
         >
-          <motion.div
-            key={`receipt-${selectedFlower.id}`}
-            initial={{ y: "-100%" }}
-            animate={{ y: "0%" }}
-            exit={{ y: "-100%" }}
-            transition={{
-              duration: 0.8,
-              ease: [0.16, 1, 0.3, 1], // snappy slide-down printing motion
-            }}
+          <div
             className="relative w-full flex flex-col"
             style={{
               background: "#F9F8F5",
@@ -582,8 +584,8 @@ export function ReceiptModal({
                 </button>
               </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   );
