@@ -91,12 +91,38 @@ export function ReceiptModal({
     }
   };
 
+  const shareOrDownload = async (dataUrl: string, filename: string) => {
+    try {
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], filename, { type: blob.type || 'image/png' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Canopy',
+        });
+        return;
+      }
+      
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = filename;
+      link.click();
+    } catch (err) {
+      console.error("Share failed", err);
+      if ((err as Error).name !== 'AbortError') {
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = filename;
+        link.click();
+      }
+    }
+  };
+
   const handleDownload = () => {
     if (!previewUrl) return;
-    const link = document.createElement("a");
-    link.href = previewUrl;
-    link.download = `canopy-receipt-${selectedFlower.id}.png`;
-    link.click();
+    shareOrDownload(previewUrl, `canopy-receipt-${selectedFlower.id}.png`);
   };
 
   const zigzagClipPaper = useMemo(() => {
@@ -634,10 +660,7 @@ export function ReceiptModal({
                 {selectedFlower.drawing && (
                   <button
                     onClick={() => {
-                      const link = document.createElement("a");
-                      link.href = selectedFlower.drawing!;
-                      link.download = `flower-${selectedFlower.id}.png`;
-                      link.click();
+                      shareOrDownload(selectedFlower.drawing!, `flower-${selectedFlower.id}.png`);
                     }}
                     className="flex-1 h-[44px] flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
                     style={{
@@ -709,7 +732,7 @@ export function ReceiptModal({
                 letterSpacing: "0.08em" 
               }}
             >
-              SAVE TO PHOTOS
+              SHARE / SAVE
             </button>
           </div>
         </div>
