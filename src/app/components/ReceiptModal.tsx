@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { Trash2, X } from "lucide-react";
 import { Flower } from "../types";
@@ -196,30 +196,54 @@ export function ReceiptModal({
     []
   );
 
-  return (
-    <div className="fixed inset-0 z-[101] flex flex-col items-center">
-      {/* 1. Dedicated static backdrop — separated from scroll container to prevent GPU seam artifacts */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-        className="fixed inset-0 pointer-events-auto"
-        style={{
-          background: "rgba(0,0,0,0.6)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-        }}
-      />
+  const pointerDownPos = useRef<{ x: number; y: number } | null>(null);
 
-      {/* 2. Modal content layer — sits on top, isolated from backdrop filter */}
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.target === e.currentTarget) {
+      pointerDownPos.current = { x: e.clientX, y: e.clientY };
+    } else {
+      pointerDownPos.current = null;
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (pointerDownPos.current && e.target === e.currentTarget) {
+      const dx = Math.abs(e.clientX - pointerDownPos.current.x);
+      const dy = Math.abs(e.clientY - pointerDownPos.current.y);
+      if (dx < 6 && dy < 6) {
+        onClose();
+      }
+    }
+    pointerDownPos.current = null;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      className="fixed inset-0 z-[101] overflow-y-auto no-scrollbar flex flex-col items-center"
+      style={{
+        background: "rgba(0,0,0,0.6)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        overscrollBehaviorY: "contain",
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+        fontFamily: BODY,
+      }}
+    >
+      {/* Center column holding sticky printer head and paper */}
       <div 
-        className="fixed inset-0 flex flex-col items-center pointer-events-none z-10"
-        style={{ fontFamily: BODY }}
+        className="w-full max-w-[420px] flex flex-col items-center shrink-0 relative pb-12"
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
       >
-        {/* PRINTER HEAD (fixed at top, clean vector SVG geometry without CSS clip-path mask) */}
+        {/* STICKY PRINTER HEAD (fixed to top of scroll container) */}
         <div
-          className="w-full max-w-[420px] shrink-0 pointer-events-auto relative z-[110]"
+          className="sticky top-0 w-full shrink-0 z-30 pointer-events-auto"
         >
           <div
             className="w-full h-[58px] flex items-center justify-between px-5 relative"
@@ -265,39 +289,25 @@ export function ReceiptModal({
           </svg>
         </div>
 
-        {/* SCROLLABLE RECEIPT WRAPPER */}
-        <div 
-          className="w-full max-w-[420px] flex-1 overflow-y-auto no-scrollbar relative pointer-events-auto z-10"
+        {/* RECEIPT PAPER CONTAINER (tucked under sticky printer head) */}
+        <div
+          className="relative w-full flex flex-col z-10 pointer-events-auto"
           style={{
-            marginTop: "-64px", // Starts all the way at y = 0 cleanly behind printer head
-            paddingTop: "0px",
-            paddingBottom: "48px",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              onClose();
-            }
+            marginTop: "-64px", // Tucked cleanly behind the 64px sticky printer head
+            filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
           }}
         >
-          <div
+          <motion.div
+            key={`receipt-${selectedFlower.id}`}
+            initial={{ y: "-100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-100%" }}
+            transition={{
+              duration: 0.8,
+              ease: [0.16, 1, 0.3, 1], // snappy out
+            }}
             className="relative w-full flex flex-col"
             style={{
-              filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
-            }}
-          >
-            <motion.div
-              key={`receipt-${selectedFlower.id}`}
-              initial={{ y: "-100%" }}
-              animate={{ y: "0%" }}
-              exit={{ y: "-100%" }}
-              transition={{
-                duration: 0.8,
-                ease: [0.16, 1, 0.3, 1], // snappy out
-              }}
-              className="relative w-full flex flex-col"
-              style={{
                 background: "#F9F8F5",
                 clipPath: zigzagClipPaper,
                 WebkitClipPath: zigzagClipPaper,
@@ -614,7 +624,6 @@ export function ReceiptModal({
           </motion.div>
         </div>
       </div>
-    </div>
-  </div>
+    </motion.div>
   );
 }
