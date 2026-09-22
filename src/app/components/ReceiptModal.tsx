@@ -258,7 +258,7 @@ export function ReceiptModal({
         <div 
           className="w-full max-w-[420px] flex-1 overflow-y-auto no-scrollbar relative pointer-events-auto z-10"
           style={{
-            marginTop: "-28px", // Tucks 22px securely under the solid printer head (teeth end at 64px, valleys at 58px)
+            marginTop: "-64px", // Starts all the way at y = 0 cleanly behind printer head
             paddingTop: "0px",
             paddingBottom: "48px",
             scrollbarWidth: "none",
@@ -273,7 +273,7 @@ export function ReceiptModal({
           <div
             className="relative w-full flex flex-col"
             style={{
-              boxShadow: "0 16px 40px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.08)",
+              filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
             }}
           >
             <motion.div
@@ -297,7 +297,7 @@ export function ReceiptModal({
               onClick={(e) => e.stopPropagation()}
             >
             {/* CONTENT INSIDE PAPER */}
-            <div className="pt-10 px-6 pb-4">
+            <div className="pt-20 px-6 pb-4">
               
               {/* Optional Drawing */}
               {selectedFlower.drawing && (
