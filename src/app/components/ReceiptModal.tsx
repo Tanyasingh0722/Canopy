@@ -365,20 +365,20 @@ export function ReceiptModal({
                   style={{
                     position: "absolute",
                     right: 0,
-                    top: 10,
+                    top: 6,
                     transform: isBloomed ? "rotate(-6deg)" : "rotate(6deg)",
-                    border: `2px solid ${isBloomed ? GREEN : RED}`,
+                    border: `1.5px solid ${isBloomed ? GREEN : RED}`,
                     color: isBloomed ? GREEN : RED,
-                    padding: "4px 12px",
+                    padding: "3px 8px",
                     borderRadius: "4px",
                     fontFamily: HEAD,
-                    fontSize: 22,
-                    letterSpacing: "0.1em",
+                    fontSize: 15,
+                    letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     opacity: 0.9,
                   }}
                 >
-                  {isBloomed ? "APPROVED" : "REJECTED"}
+                  {isBloomed ? "MINDFUL" : "GUILTY"}
                 </div>
               </div>
 
