@@ -1,0 +1,2186 @@
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:42:12+05:30
+Completed At: 2026-09-22T17:42:13+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1450 to 1550
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1450:               />
+1451:             </div>
+1452: 
+1453:             {/* ======================================================
+1454:                 FOOTER
+1455:             ====================================================== */}
+1456: 
+1457:             <div
+1458:               style={{
+1459:                 padding: "0 26px 26px",
+1460:                 position: "relative",
+1461:                 zIndex: 1,
+1462:               }}
+1463:             >
+1464:               {/* Barcode */}
+1465: 
+1466:               <div className="flex justify-center mb-4">
+1467:                 <svg
+1468:                   width="270"
+1469:                   height="34"
+1470:                   viewBox="0 0 270 34"
+1471:                   fill="none"
+1472:                   style={{ opacity: 0.55 }}
+1473:                 >
+1474:                   {barcodeLines.map((bar, i) => (
+1475:                     <rect
+1476:                       key={i}
+1477:                       x={bar.x}
+1478:                       y={34 - bar.h}
+1479:                       width={bar.w}
+1480:                       height={bar.h}
+1481:                       fill="#5a5550"
+1482:                     />
+1483:                   ))}
+1484:                 </svg>
+1485:               </div>
+1486: 
+1487:               {/* Quote */}
+1488: 
+1489:               <p
+1490:                 style={{
+1491:                   fontFamily: HEAD,
+1492:                   fontStyle: "italic",
+1493:                   fontSize: 14,
+1494:                   color: "#8a827e",
+1495:                   textAlign: "center",
+1496:                   marginBottom: 6,
+1497:                   letterSpacing: "0.5px",
+1498:                 }}
+1499:               >
+1500:                 {quote}
+1501:               </p>
+1502: 
+1503:               {/* Brand */}
+1504: 
+1505:               <p
+1506:                 style={{
+1507:                   fontFamily: BODY,
+1508:                   fontSize: 10,
+1509:                   color: "#8a827e",
+1510:                   textAlign: "center",
+1511:                   letterSpacing: "2px",
+1512:                   textTransform: "uppercase",
+1513:                   marginBottom: 20,
+1514:                 }}
+1515:               >
+1516:                 CANOPY · PAUSE BEFORE YOU PURCHASE
+1517:               </p>
+1518: 
+1519:               {/* Buttons */}
+1520: 
+1521:               <div className="flex gap-2 items-center">
+1522:                 <button
+1523:                   onClick={() => {
+1524:                     if (
+1525:                       window.confirm(
+1526:                         "Are you sure you want to delete this entry?",
+1527:                       )
+1528:                     ) {
+1529:                       onDelete(selectedFlower.id);
+1530:                     }
+1531:                   }}
+1532:                   className="p-3.5 transition-all active:scale-[0.95] hover:text-[#D9383A] hover:border-[#D9383A]"
+1533:                   style={{
+1534:                     background: "transparent",
+1535:                     color: "#8a827e",
+1536:                     border: "1.5px solid #d0ccc8",
+1537:                     borderRadius: 6,
+1538:                     cursor: "pointer",
+1539:                   }}
+1540:                   title="Delete Entry"
+1541:                 >
+1542:                   <Trash2 className="w-4 h-4" />
+1543:                 </button>
+1544: 
+1545:                 <button
+1546:                   onClick={() => {
+1547:                     if (selectedFlower.drawing) {
+1548:                       const link = document.createElement("a");
+1549:                       link.href = selectedFlower.drawing;
+1550:                       link.download = `flower-${selectedFlower.id}.png`;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:42:18+05:30
+Completed At: 2026-09-22T17:42:18+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1000 to 1450
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1000:             pointerEvents: "none",
+1001:           }}
+1002:         >
+1003:           <div
+1004:             className="w-full h-full relative"
+1005:             style={{
+1006:               background: "#182622",
+1007:             }}
+1008:           >
+1009:             <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 flex items-center gap-2 opacity-80">
+1010:               {/* Status Dot */}
+1011:               <div
+1012:                 className={`w-1.5 h-1.5 rounded-full ${
+1013:                   isPreparing ? "bg-[#D9383A] animate-pulse" : "bg-[#4DAA57]"
+1014:                 }`}
+1015:               />
+1016: 
+1017:               {/* Status Text */}
+1018:               <span
+1019:                 style={{
+1020:                   fontFamily: HEAD,
+1021:                   fontSize: 11,
+1022:                   letterSpacing: "2.5px",
+1023:                   color: "#FAF8F5",
+1024:                   textTransform: "uppercase",
+1025:                 }}
+1026:               >
+1027:                 {isPreparing
+1028:                   ? `PROCESSING... ${countdown}`
+1029:                   : "CANOPY PRINTER"}
+1030:               </span>
+1031:             </div>
+1032: 
+1033:             <button
+1034:               onClick={handleClose}
+1035:               className="absolute right-3.5 top-1/2 -translate-y-1/2 z-40 w-7 h-7 flex items-center justify-center rounded-full transition-all active:scale-90 pointer-events-auto hover:bg-white/10"
+1036:               style={{
+1037:                 background:
+1038:                   "rgba(250,248,245,0.12)",
+1039:               }}
+1040:               title="Close"
+1041:             >
+1042:               <X className="w-3.5 h-3.5 text-[#FAF8F5]" />
+1043:             </button>
+1044:           </div>
+1045:         </div>
+1046: 
+1047:         {/* ==========================================================
+1048:             RECEIPT
+1049:         ========================================================== */}
+1050: 
+1051:         <div
+1052:           className="relative w-full max-w-[390px] overflow-hidden shrink-0"
+1053:           style={{
+1054:             zIndex: 20,
+1055:             filter: "drop-shadow(0 16px 40px rgba(0,0,0,0.32))",
+1056:           }}
+1057:         >
+1058:           {/* ========================================================
+1059:               TICKET PAPER
+1060:               - starts at y = -100% (hidden ABOVE the wrapper)
+1061:               - animates down to y = 0% (fully visible)
+1062:               - wrapper naturally sizes to the ticket's true height!
+1063:           ======================================================== */}
+1064: 
+1065:           <motion.div
+1066:             key={`receipt-${selectedFlower.id}`}
+1067:             initial={{ y: "-100%" }}
+1068:             animate={{
+1069:               y: isClosing ? "-100%" : isPrinting ? "0%" : "-100%",
+1070:             }}
+1071:             transition={{
+1072:               duration: isClosing ? 0.22 : 2.5,
+1073:               ease: isClosing ? "easeIn" : "linear",
+1074:             }}
+1075:             className="relative w-full"
+1076:             style={{
+1077:               background: "#FAF8F5",
+1078:               clipPath: zigzagClip,
+1079:             }}
+1080:             onClick={(e) => e.stopPropagation()}
+1081:           >
+1082:             {/* ======================================================
+1083:                 PAPER GRAIN
+1084:             ====================================================== */}
+1085: 
+1086:             <div
+1087:               style={{
+1088:                 position: "absolute",
+1089:                 inset: 0,
+1090:                 backgroundImage:
+1091:                   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E\")",
+1092:                 backgroundSize: "128px",
+1093:                 pointerEvents: "none",
+1094:                 opacity: 0.6,
+1095:               }}
+1096:             />
+1097: 
+1098:             {/* ======================================================
+1099:                 MAIN CONTENT
+1100:             ====================================================== */}
+1101: 
+1102:             <div
+1103:               style={{
+1104:                 padding: "36px 26px 14px",
+1105:                 position: "relative",
+1106:                 zIndex: 1,
+1107:               }}
+1108:             >
+1109:               {/* ====================================================
+1110:                   HEADER
+1111:               ==================================================== */}
+1112: 
+1113:               <div className="flex items-center justify-between mb-6">
+1114:                 <p
+1115:                   style={{
+1116:                     fontFamily: BODY,
+1117:                     fontSize: 12,
+1118:                     letterSpacing: "2.5px",
+1119:                     color: "#8a827e",
+1120:                     textTransform: "uppercase",
+1121:                   }}
+1122:                 >
+1123:                   Entry Log {entryIndex}
+1124:                 </p>
+1125:               </div>
+1126: 
+1127:               {/* ====================================================
+1128:                   DRAWING
+1129:               ==================================================== */}
+1130: 
+1131:               <div className="flex justify-center items-center mb-6 py-2 min-h-[130px]">
+1132:                 {selectedFlower.drawing ? (
+1133:                   <img
+1134:                     src={selectedFlower.drawing}
+1135:                     alt="flower drawing"
+1136:                     draggable={false}
+1137:                     className="block"
+1138:                     style={{
+1139:                       maxHeight: 150,
+1140:                       maxWidth: 220,
+1141:                       width: "auto",
+1142:                       height: "auto",
+1143:                       objectFit: "contain",
+1144:                       display: "block",
+1145:                       filter:
+1146:                         selectedFlower.state === "wilted"
+1147:                           ? "grayscale(1) brightness(0.6)"
+1148:                           : "none",
+1149:                     }}
+1150:                   />
+1151:                 ) : (
+1152:                   <div
+1153:                     style={{
+1154:                       width: 70,
+1155:                       height: 70,
+1156:                       borderRadius: "50%",
+1157:                       background: `${hex}30`,
+1158:                     }}
+1159:                   />
+1160:                 )}
+1161:               </div>
+1162: 
+1163:               {/* ====================================================
+1164:                   CURRENT STATE
+1165:               ==================================================== */}
+1166: 
+1167:               {selectedFlower.emotion && (
+1168:                 <div className="flex items-center justify-between mb-5">
+1169:                   <div>
+1170:                     <p
+1171:                       style={{
+1172:                         fontFamily: BODY,
+1173:                         fontSize: 10,
+1174:                         letterSpacing: "2px",
+1175:                         color: "#8a827e",
+1176:                         textTransform: "uppercase",
+1177:                         marginBottom: 4,
+1178:                       }}
+1179:                     >
+1180:                       Current State
+1181:                     </p>
+1182: 
+1183:                     <p
+1184:                       style={{
+1185:                         fontFamily: HEAD,
+1186:                         fontSize: 38,
+1187:                         color: "#1C2E2A",
+1188:                         lineHeight: 1.05,
+1189:                       }}
+1190:                     >
+1191:                       {selectedFlower.emotion.name}
+1192:                     </p>
+1193:                   </div>
+1194: 
+1195:                   <div
+1196:                     style={{
+1197:                       transform: "rotate(-7deg)",
+1198:                       border: `2.5px solid ${
+1199:                         selectedFlower.state === "bloomed"
+1200:                           ? "#2D8A4E"
+1201:                           : "#D9383A"
+1202:                       }`,
+1203:                       borderRadius: 4,
+1204:                       padding: "4px 14px",
+1205:                       opacity: 0.9,
+1206:                       flexShrink: 0,
+1207:                     }}
+1208:                   >
+1209:                     <span
+1210:                       style={{
+1211:                         fontFamily: HEAD,
+1212:                         fontSize: 15,
+1213:                         letterSpacing: "3px",
+1214:                         textTransform: "uppercase",
+1215:                         color:
+1216:                           selectedFlower.state === "bloomed"
+1217:                             ? "#2D8A4E"
+1218:                             : "#D9383A",
+1219:                       }}
+1220:                     >
+1221:                       {selectedFlower.state === "bloomed"
+1222:                         ? "APPROVED"
+1223:                         : "FAILED"}
+1224:                     </span>
+1225:                   </div>
+1226:                 </div>
+1227:               )}
+1228: 
+1229:               {/* ====================================================
+1230:                   DIVIDER
+1231:               ==================================================== */}
+1232: 
+1233:               <div
+1234:                 style={{
+1235:                   borderBottom: "2px dashed #d0ccc8",
+1236:                   margin: "14px 0 16px",
+1237:                 }}
+1238:               />
+1239: 
+1240:               {/* ====================================================
+1241:                   DATE
+1242:               ==================================================== */}
+1243: 
+1244:               <div className="flex justify-between mb-5">
+1245:                 <p
+1246:                   style={{
+1247:                     fontFamily: HEAD,
+1248:                     fontSize: 14,
+1249:                     color: "#1C2E2A",
+1250:                     letterSpacing: "1px",
+1251:                     textTransform: "uppercase",
+1252:                   }}
+1253:                 >
+1254:                   {dayLabel}, {dateLabel}
+1255:                 </p>
+1256: 
+1257:                 <p
+1258:                   style={{
+1259:                     fontFamily: BODY,
+1260:                     fontSize: 13,
+1261:                     color: "#8a827e",
+1262:                   }}
+1263:                 >
+1264:                   {timeStr}
+1265:                 </p>
+1266:               </div>
+1267: 
+1268:               {/* ====================================================
+1269:                   SUBJECT
+1270:               ==================================================== */}
+1271: 
+1272:               {(selectedFlower.itemName || selectedFlower.whoFor) && (
+1273:                 <div className="mb-5">
+1274:                   <p
+1275:                     style={{
+1276:                       fontFamily: BODY,
+1277:                       fontSize: 10,
+1278:                       letterSpacing: "2px",
+1279:                       color: "#8a827e",
+1280:                       textTransform: "uppercase",
+1281:                       marginBottom: 4,
+1282:                     }}
+1283:                   >
+1284:                     Subject
+1285:                   </p>
+1286: 
+1287:                   <p
+1288:                     style={{
+1289:                       fontFamily: BODY,
+1290:                       fontSize: 15,
+1291:                       color: "#1C2E2A",
+1292:                     }}
+1293:                   >
+1294:                     {selectedFlower.itemName || "—"} /{" "}
+1295:                     {selectedFlower.whoFor || "Self"}
+1296:                   </p>
+1297:                 </div>
+1298:               )}
+1299: 
+1300:               {/* ====================================================
+1301:                   JOURNAL
+1302:               ==================================================== */}
+1303: 
+1304:               {selectedFlower.journal && (
+1305:                 <div className="mb-5">
+1306:                   <p
+1307:                     style={{
+1308:                       fontFamily: BODY,
+1309:                       fontSize: 10,
+1310:                       letterSpacing: "2px",
+1311:                       color: "#8a827e",
+1312:                       textTransform: "uppercase",
+1313:                       marginBottom: 5,
+1314:                     }}
+1315:                   >
+1316:                     Itemized Details
+1317:                   </p>
+1318: 
+1319:                   <p
+1320:                     style={{
+1321:                       fontFamily: BODY,
+1322:                       fontSize: 14,
+1323:                       color: "#3a3530",
+1324:                       lineHeight: 1.75,
+1325:                     }}
+1326:                   >
+1327:                     {selectedFlower.journal}
+1328:                   </p>
+1329:                 </div>
+1330:               )}
+1331: 
+1332:               {/* ====================================================
+1333:                   VOICE NOTE
+1334:               ==================================================== */}
+1335: 
+1336:               {selectedFlower.voiceNote && (
+1337:                 <div className="mb-5">
+1338:                   <p
+1339:                     style={{
+1340:                       fontFamily: BODY,
+1341:                       fontSize: 10,
+1342:                       letterSpacing: "2px",
+1343:                       color: "#8a827e",
+1344:                       textTransform: "uppercase",
+1345:                       marginBottom: 5,
+1346:                     }}
+1347:                   >
+1348:                     Voice Note
+1349:                   </p>
+1350: 
+1351:                   <VoicePlayer src={selectedFlower.voiceNote} />
+1352:                 </div>
+1353:               )}
+1354: 
+1355:               {/* ====================================================
+1356:                   PHOTOS
+1357:               ==================================================== */}
+1358: 
+1359:               {selectedFlower.photos &&
+1360:                 selectedFlower.photos.filter(
+1361:                   (p: any) =>
+1362:                     typeof p === "string" &&
+1363:                     p.trim().length > 0 &&
+1364:                     !p.includes("undefined"),
+1365:                 ).length > 0 && (
+1366:                   <div className="mb-4">
+1367:                     <p
+1368:                       style={{
+1369:                         fontFamily: BODY,
+1370:                         fontSize: 10,
+1371:                         letterSpacing: "2px",
+1372:                         color: "#8a827e",
+1373:                         textTransform: "uppercase",
+1374:                         marginBottom: 6,
+1375:                       }}
+1376:                     >
+1377:                       Item Image
+1378:                     </p>
+1379: 
+1380:                     <div className="flex gap-2 flex-wrap">
+1381:                       {selectedFlower.photos
+1382:                         .filter(
+1383:                           (p: any) =>
+1384:                             typeof p === "string" &&
+1385:                             p.trim().length > 0 &&
+1386:                             !p.includes("undefined"),
+1387:                         )
+1388:                         .map((photo: string, idx: number) => (
+1389:                           <img
+1390:                             key={idx}
+1391:                             src={photo}
+1392:                             alt={`Item ${idx + 1}`}
+1393:                             draggable={false}
+1394:                             onError={(e) => {
+1395:                               e.currentTarget.style.display = "none";
+1396:                             }}
+1397:                             className="w-16 h-16 object-cover rounded border border-[#d0ccc8]"
+1398:                           />
+1399:                         ))}
+1400:                     </div>
+1401:                   </div>
+1402:                 )}
+1403: 
+1404:               {/* ====================================================
+1405:                   DIVIDER
+1406:               ==================================================== */}
+1407: 
+1408:               <div
+1409:                 style={{
+1410:                   borderBottom: "2px dashed #d0ccc8",
+1411:                   margin: "16px 0",
+1412:                 }}
+1413:               />
+1414: 
+1415:               {/* ====================================================
+1416:                   TOTAL
+1417:               ==================================================== */}
+1418: 
+1419:               {selectedFlower.amount > 0 && (
+1420:                 <div className="flex items-baseline justify-between mb-4">
+1421:                   <p
+1422:                     style={{
+1423:                       fontFamily: BODY,
+1424:                       fontSize: 10,
+1425:                       letterSpacing: "2px",
+1426:                       color: "#8a827e",
+1427:                       textTransform: "uppercase",
+1428:                     }}
+1429:                   >
+1430:                     Total Amount
+1431:                   </p>
+1432: 
+1433:                   <p
+1434:                     style={{
+1435:                       fontFamily: HEAD,
+1436:                       fontSize: 32,
+1437:                       color: "#1C2E2A",
+1438:                     }}
+1439:                   >
+1440:                     ₹{selectedFlower.amount.toFixed(2)}
+1441:                   </p>
+1442:                 </div>
+1443:               )}
+1444: 
+1445:               <div
+1446:                 style={{
+1447:                   borderBottom: "2px dashed #d0ccc8",
+1448:                   margin: "0 0 16px",
+1449:                 }}
+1450:               />
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:42:25+05:30
+Completed At: 2026-09-22T17:42:25+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 800 to 1000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+800:       if (cancelled) return;
+801:       playTick();
+802:       ticks++;
+803:       if (ticks >= 16) {
+804:         clearInterval(int);
+805:       }
+806:     }, 150);
+807: 
+808:     return () => {
+809:       cancelled = true;
+810:       clearInterval(int);
+811:     };
+812:   }, [isPrinting, isClosing, playTick]);
+813: 
+814:   // ────────────────────────────────────────────────────────────────
+815:   // CLOSE
+816:   // ────────────────────────────────────────────────────────────────
+817: 
+818:   const handleClose = () => {
+819:     if (isClosing) return;
+820:     setIsClosing(true);
+821:     setTimeout(() => {
+822:       onClose();
+823:     }, 250);
+824:   };
+825: 
+826:   // ────────────────────────────────────────────────────────────────
+827:   // DATA
+828:   // ────────────────────────────────────────────────────────────────
+829: 
+830:   const hex =
+831:     selectedFlower.emotion?.hex ||
+832:     "#4DAA57";
+833: 
+834:   const entryIndex = Math.max(
+835:     1,
+836:     allFlowers.findIndex(
+837:       (f) => f.id === selectedFlower.id,
+838:     ) + 1,
+839:   );
+840: 
+841:   const flowerDate =
+842:     new Date(selectedFlower.date);
+843: 
+844:   const dayLabel = flowerDate
+845:     .toLocaleDateString("en-US", {
+846:       weekday: "long",
+847:     })
+848:     .toUpperCase();
+849: 
+850:   const dateLabel = flowerDate
+851:     .toLocaleDateString("en-US", {
+852:       month: "short",
+853:       day: "numeric",
+854:     })
+855:     .toUpperCase();
+856: 
+857:   const timeStr = flowerDate
+858:     .toLocaleTimeString("en-US", {
+859:       hour: "2-digit",
+860:       minute: "2-digit",
+861:       hour12: true,
+862:     })
+863:     .toUpperCase();
+864: 
+865:   // ────────────────────────────────────────────────────────────────
+866:   // TORN EDGE
+867:   // ────────────────────────────────────────────────────────────────
+868: 
+869:   const TEETH = 32;
+870: 
+871:   const zigzagClip = useMemo(() => {
+872:     const pts: string[] = [
+873:       "0% 0%",
+874:       "100% 0%",
+875:     ];
+876: 
+877:     for (
+878:       let i = TEETH;
+879:       i >= 0;
+880:       i--
+881:     ) {
+882:       const xPct = ((i / TEETH) * 100).toFixed(2);
+883:       const yVal = i % 2 === 0 ? "100%" : "calc(100% - 6px)";
+884:       pts.push(`${xPct}% ${yVal}`);
+885:     }
+886: 
+887:     return `polygon(${pts.join(", ")})`;
+888:   }, []);
+889: 
+890:   // ────────────────────────────────────────────────────────────────
+891:   // BARCODE
+892:   // ────────────────────────────────────────────────────────────────
+893: 
+894:   const barcodeLines = useMemo(
+895:     () =>
+896:       Array.from(
+897:         { length: 60 },
+898:         (_, i) => {
+899:           const w =
+900:             i % 7 === 0
+901:               ? 3
+902:               : i % 3 === 0
+903:                 ? 2
+904:                 : 1;
+905: 
+906:           const h =
+907:             i % 5 === 0
+908:               ? 32
+909:               : 24;
+910: 
+911:           return {
+912:             x: i * 4.5,
+913:             w,
+914:             h,
+915:           };
+916:         },
+917:       ),
+918:     [],
+919:   );
+920: 
+921:   const quotes = [
+922:     "Thank you for checking in with yourself.",
+923:     "Thank you for noticing.",
+924:     "You chose awareness over impulse.",
+925:     "Every pause is progress.",
+926:     "You're building something beautiful.",
+927:     "Believe in your own bloom.",
+928:   ];
+929: 
+930:   const quote =
+931:     quotes[
+932:       selectedFlower.id %
+933:         quotes.length
+934:     ];
+935: 
+936:   // ────────────────────────────────────────────────────────────────
+937:   // RENDER
+938:   // ────────────────────────────────────────────────────────────────
+939: 
+940:   return (
+941:     <>
+942:       {/* ============================================================
+943:           BACKDROP
+944:       ============================================================ */}
+945: 
+946:       <motion.div
+947:         key="receipt-backdrop"
+948:         initial={{
+949:           opacity: 0,
+950:         }}
+951:         animate={{
+952:           opacity: isClosing
+953:             ? 0
+954:             : 1,
+955:         }}
+956:         exit={{
+957:           opacity: 0,
+958:         }}
+959:         transition={{
+960:           duration: 0.22,
+961:         }}
+962:         onClick={handleClose}
+963:         className="fixed inset-0 z-[100]"
+964:         style={{
+965:           background:
+966:             "rgba(0,0,0,0.58)",
+967:           backdropFilter:
+968:             "blur(8px)",
+969:         }}
+970:       />
+971: 
+972:       {/* ============================================================
+973:           MAIN SCROLL CONTAINER
+974:       ============================================================ */}
+975: 
+976:       <div
+977:         className="fixed inset-0 z-[101] overflow-y-auto flex flex-col items-center no-scrollbar"
+978:         style={{
+979:           paddingBottom: "48px",
+980:           pointerEvents: "auto",
+981:           scrollbarWidth: "none",
+982:           msOverflowStyle: "none",
+983:         }}
+984:         onClick={(e) => {
+985:           if (
+986:             e.target ===
+987:             e.currentTarget
+988:           ) {
+989:             handleClose();
+990:           }
+991:         }}
+992:       >
+993:         {/* ==========================================================
+994:             PRINTER HEAD
+995:         ========================================================== */}
+996: 
+997:         <div
+998:           className="sticky top-0 z-[50] w-full max-w-[390px] h-[58px] shrink-0"
+999:           style={{
+1000:             pointerEvents: "none",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:42:32+05:30
+Completed At: 2026-09-22T17:42:32+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1 to 200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import {
+2:   useEffect,
+3:   useRef,
+4:   useState,
+5:   useCallback,
+6:   useMemo,
+7: } from "react";
+8: import { motion, AnimatePresence } from "motion/react";
+9: import { createPortal } from "react-dom";
+10: import {
+11:   buildZIndexMap,
+12:   flowerPct,
+13:   flowerRenderSize,
+14: } from "./gardenZ";
+15: import {
+16:   Play,
+17:   Pause,
+18:   ChevronLeft,
+19:   ChevronRight,
+20:   ChevronDown,
+21:   ChevronsUpDown,
+22:   X,
+23:   Share,
+24:   Download,
+25:   Trash2,
+26:   Image as ImageIcon,
+27: } from "lucide-react";
+28: import ScribblePng from "../../imports/115.png";
+29: 
+30: const BG = "#FAFAFA";
+31: const TEAL = "#1C2E2A";
+32: const GREEN = "#4DAA57";
+33: const HEAD = "'Passion One', sans-serif";
+34: const BODY = "'Slabo 13px', serif";
+35: 
+36: const DAY_1 = ["S", "M", "T", "W", "T", "F", "S"];
+37: 
+38: export function sameDay(a: Date, b: Date) {
+39:   return (
+40:     a.getFullYear() === b.getFullYear() &&
+41:     a.getMonth() === b.getMonth() &&
+42:     a.getDate() === b.getDate()
+43:   );
+44: }
+45: export function dateKey(d: Date) {
+46:   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+47: }
+48: // Monday-anchored start of the ISO week containing `d`.
+49: export function startOfWeek(d: Date) {
+50:   const x = new Date(
+51:     d.getFullYear(),
+52:     d.getMonth(),
+53:     d.getDate(),
+54:   );
+55:   const dow = (x.getDay() + 6) % 7; // 0 = Monday
+56:   x.setDate(x.getDate() - dow);
+57:   x.setHours(0, 0, 0, 0);
+58:   return x;
+59: }
+60: export function sameWeek(a: Date, b: Date) {
+61:   return startOfWeek(a).getTime() === startOfWeek(b).getTime();
+62: }
+63: // e.g. "Jun 15 – 21" or "Jun 29 – Jul 5"
+64: function weekRangeLabel(d: Date) {
+65:   const s = startOfWeek(d);
+66:   const e = new Date(s);
+67:   e.setDate(s.getDate() + 6);
+68:   const sM = s.toLocaleDateString("en-US", { month: "short" });
+69:   const eM = e.toLocaleDateString("en-US", { month: "short" });
+70:   return sM === eM
+71:     ? `${sM} ${s.getDate()} – ${e.getDate()}`
+72:     : `${sM} ${s.getDate()} – ${eM} ${e.getDate()}`;
+73: }
+74: 
+75: // ── Calendar Strip ────────────────────────────────────────────────
+76: const STRIP_START = new Date(2026, 0, 1); // Jan 1 2026
+77: const DAY_W = 48; // px per day cell incl. gap
+78: 
+79: function RecentDaysStrip({
+80:   selectedDate,
+81:   onSelectDate,
+82:   flowersByDate,
+83: }: {
+84:   selectedDate: Date;
+85:   onSelectDate: (d: Date) => void;
+86:   flowersByDate: Map<string, number>;
+87: }) {
+88:   const today = new Date();
+89:   const scrollRef = useRef<HTMLDivElement>(null);
+90:   const todayRef = useRef<HTMLButtonElement>(null);
+91:   const [showJump, setShowJump] = useState(false);
+92: 
+93:   // Build every day from Jan 1 2026 → today
+94:   const days: Date[] = [];
+95:   const cursor = new Date(STRIP_START);
+96:   while (cursor <= today) {
+97:     days.push(new Date(cursor));
+98:     cursor.setDate(cursor.getDate() + 1);
+99:   }
+100: 
+101:   // Scroll to today on mount
+102:   useEffect(() => {
+103:     if (todayRef.current && scrollRef.current) {
+104:       const el = todayRef.current;
+105:       const container = scrollRef.current;
+106:       // Center today in the viewport
+107:       const offset =
+108:         el.offsetLeft -
+109:         container.clientWidth / 2 +
+110:         el.clientWidth / 2;
+111:       container.scrollLeft = offset;
+112:     }
+113:   }, []);
+114: 
+115:   // Track whether we've scrolled away from today
+116:   function handleScroll() {
+117:     if (!scrollRef.current || !todayRef.current) return;
+118:     const container = scrollRef.current;
+119:     const el = todayRef.current;
+120:     const elCenter = el.offsetLeft + el.clientWidth / 2;
+121:     const viewLeft = container.scrollLeft;
+122:     const viewRight =
+123:       container.scrollLeft + container.clientWidth;
+124:     setShowJump(elCenter < viewLeft || elCenter > viewRight);
+125:   }
+126: 
+127:   function scrollToToday() {
+128:     if (!todayRef.current || !scrollRef.current) return;
+129:     const el = todayRef.current;
+130:     const container = scrollRef.current;
+131:     const offset =
+132:       el.offsetLeft -
+133:       container.clientWidth / 2 +
+134:       el.clientWidth / 2;
+135:     container.scrollTo({ left: offset, behavior: "smooth" });
+136:   }
+137: 
+138:   return (
+139:     <div className="relative w-full pt-[8px]">
+140:       {/* Scrollable row */}
+141:       <div
+142:         ref={scrollRef}
+143:         onScroll={handleScroll}
+144:         className="flex overflow-x-auto gap-[4px] px-[16px] no-scrollbar"
+145:         style={{
+146:           scrollbarWidth: "none",
+147:           WebkitOverflowScrolling: "touch",
+148:         }}
+149:       >
+150:         {days.map((date, i) => {
+151:           const isToday = sameDay(date, today);
+152:           const isSelected = sameDay(date, selectedDate);
+153:           const hasDot =
+154:             (flowersByDate.get(dateKey(date)) ?? 0) > 0;
+155: 
+156:           return (
+157:             <button
+158:               key={i}
+159:               ref={isToday ? todayRef : undefined}
+160:               onClick={() => onSelectDate(date)}
+161:               className="flex flex-col items-center rounded-xl transition-transform active:scale-95 shrink-0"
+162:               style={{
+163:                 // ~7 days per viewport (6 gaps × 4px = 24px), scrollable
+164:                 width: "calc((100% - 24px) / 7)",
+165:                 minWidth: 40,
+166:                 padding: "8px 4px",
+167:                 gap: 2,
+168:                 background: isSelected
+169:                   ? TEAL
+170:                   : isToday
+171:                     ? "rgba(28,46,42,0.08)"
+172:                     : "transparent",
+173:                 border: "1px solid transparent",
+174:               }}
+175:             >
+176:               <span
+177:                 style={{
+178:                   fontSize: 9,
+179:                   fontFamily: BODY,
+180:                   letterSpacing: "0.04em",
+181:                   textTransform: "uppercase",
+182:                   color: isSelected
+183:                     ? "rgba(252,252,252,0.6)"
+184:                     : "rgba(28,46,42,0.42)",
+185:                 }}
+186:               >
+187:                 {date
+188:                   .toLocaleDateString("en-US", {
+189:                     weekday: "short",
+190:                   })
+191:                   .slice(0, 2)}
+192:               </span>
+193:               <span
+194:                 style={{
+195:                   fontSize: 15,
+196:                   lineHeight: 1.1,
+197:                   fontFamily: HEAD,
+198:                   color: isSelected
+199:                     ? "#FAFAFA"
+200:                     : isToday
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:42:38+05:30
+Completed At: 2026-09-22T17:42:38+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 200 to 400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+200:                     : isToday
+201:                       ? TEAL
+202:                       : "rgba(28,46,42,0.65)",
+203:                   fontWeight: isToday ? 600 : 400,
+204:                 }}
+205:               >
+206:                 {date.getDate()}
+207:               </span>
+208:               <div
+209:                 style={{
+210:                   width: 4,
+211:                   height: 4,
+212:                   borderRadius: "50%",
+213:                   background: hasDot
+214:                     ? isSelected
+215:                       ? "rgba(250,250,250,0.9)"
+216:                       : GREEN
+217:                     : "transparent",
+218:                 }}
+219:               />
+220:             </button>
+221:           );
+222:         })}
+223:       </div>
+224: 
+225:       {/* "Back to today" jump pill */}
+226:       <AnimatePresence>
+227:         {showJump && (
+228:           <motion.button
+229:             initial={{ opacity: 0, y: 4, scale: 0.9 }}
+230:             animate={{ opacity: 1, y: 0, scale: 1 }}
+231:             exit={{ opacity: 0, y: 4, scale: 0.9 }}
+232:             transition={{ duration: 0.15 }}
+233:             onClick={scrollToToday}
+234:             className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-full px-3 py-1.5 z-10"
+235:             style={{
+236:               background: TEAL,
+237:               boxShadow: "0 2px 10px rgba(28,46,42,0.25)",
+238:             }}
+239:           >
+240:             <span
+241:               style={{
+242:                 fontFamily: BODY,
+243:                 fontSize: 9,
+244:                 color: "#FAFAFA",
+245:                 letterSpacing: "0.06em",
+246:                 whiteSpace: "nowrap",
+247:               }}
+248:             >
+249:               today
+250:             </span>
+251:           </motion.button>
+252:         )}
+253:       </AnimatePresence>
+254:     </div>
+255:   );
+256: }
+257: 
+258: // ── Header ────────────────────────────────────────────────────────
+259: interface HeaderProps {
+260:   selectedDate: Date;
+261:   onSelectDate: (d: Date) => void;
+262:   flowersByDate: Map<string, number>;
+263:   daySaved: number;
+264:   daySpent: number;
+265:   isToday: boolean;
+266:   viewMode?: "day" | "week";
+267:   onToggleMode?: () => void;
+268: }
+269: 
+270: export function GardenHeader({
+271:   selectedDate,
+272:   onSelectDate,
+273:   flowersByDate,
+274:   daySaved,
+275:   daySpent,
+276:   isToday,
+277:   viewMode = "day",
+278:   onToggleMode,
+279: }: HeaderProps) {
+280:   const shortDate = selectedDate.toLocaleDateString("en-US", {
+281:     month: "short",
+282:     day: "numeric",
+283:   });
+284:   const dateLabel =
+285:     viewMode === "week"
+286:       ? sameWeek(selectedDate, new Date())
+287:         ? "this week"
+288:         : weekRangeLabel(selectedDate)
+289:       : isToday
+290:         ? "today"
+291:         : shortDate;
+292: 
+293:   return (
+294:     <div className="flex-shrink-0 w-full">
+295:       <div className="flex flex-col gap-1 items-start pt-[20px] relative w-full">
+296:         <div className="w-full flex items-center justify-between gap-2 px-[10px]">
+297:           <div className="flex items-center gap-2 min-w-0">
+298:             {/* Previous week — sits right next to the label in week mode */}
+299:             {viewMode === "week" && (
+300:               <button
+301:                 onClick={() => {
+302:                   const d = new Date(selectedDate);
+303:                   d.setDate(d.getDate() - 7);
+304:                   onSelectDate(d);
+305:                 }}
+306:                 className="w-8 h-8 flex items-center justify-center rounded-full transition-transform active:scale-90 shrink-0"
+307:                 style={{ background: "rgba(28,46,42,0.06)" }}
+308:               >
+309:                 <ChevronLeft
+310:                   className="w-4 h-4"
+311:                   style={{ color: TEAL }}
+312:                 />
+313:               </button>
+314:             )}
+315: 
+316:             <button
+317:               onClick={onToggleMode}
+318:               disabled={!onToggleMode}
+319:               className="flex items-center gap-2 active:scale-[0.98] transition-transform"
+320:               style={{
+321:                 cursor: onToggleMode ? "pointer" : "default",
+322:               }}
+323:             >
+324:               <AnimatePresence mode="wait">
+325:                 <motion.h1
+326:                   key={dateLabel}
+327:                   initial={{ opacity: 0, y: 5 }}
+328:                   animate={{ opacity: 1, y: 0 }}
+329:                   exit={{ opacity: 0, y: -4 }}
+330:                   transition={{
+331:                     duration: 0.18,
+332:                     ease: "easeOut",
+333:                   }}
+334:                   style={{
+335:                     fontFamily: HEAD,
+336:                     // Shrinks on narrow phones so the week range
+337:                     // ("Jun 15 – 21") never wraps to a second line.
+338:                     fontSize: "clamp(24px, 8vw, 40px)",
+339:                     color: TEAL,
+340:                     fontWeight: 400,
+341:                     lineHeight: 1.1,
+342:                     whiteSpace: "nowrap",
+343:                     // dotted underline cue that it's tappable
+344:                     borderBottom: onToggleMode
+345:                       ? "2px dotted rgba(28,46,42,0.25)"
+346:                       : "none",
+347:                     paddingBottom: 2,
+348:                   }}
+349:                 >
+350:                   {dateLabel}
+351:                 </motion.h1>
+352:               </AnimatePresence>
+353:               {onToggleMode && (
+354:                 <ChevronsUpDown
+355:                   className="w-4 h-4"
+356:                   style={{ color: "rgba(28,46,42,0.4)" }}
+357:                 />
+358:               )}
+359:             </button>
+360: 
+361:             {/* Next week / jump back to current week (week mode, past weeks) */}
+362:             {viewMode === "week" &&
+363:               !sameWeek(selectedDate, new Date()) && (
+364:                 <div className="flex items-center gap-1.5 shrink-0">
+365:                   <button
+366:                     onClick={() => {
+367:                       const d = new Date(selectedDate);
+368:                       d.setDate(d.getDate() + 7);
+369:                       onSelectDate(d);
+370:                     }}
+371:                     className="w-8 h-8 flex items-center justify-center rounded-full transition-transform active:scale-90"
+372:                     style={{
+373:                       background: "rgba(28,46,42,0.06)",
+374:                     }}
+375:                   >
+376:                     <ChevronRight
+377:                       className="w-4 h-4"
+378:                       style={{ color: TEAL }}
+379:                     />
+380:                   </button>
+381:                   <button
+382:                     onClick={() => onSelectDate(new Date())}
+383:                     className="rounded-full px-2.5 py-1"
+384:                     style={{
+385:                       background: TEAL,
+386:                       boxShadow:
+387:                         "0 2px 10px rgba(28,46,42,0.25)",
+388:                     }}
+389:                   >
+390:                     <span
+391:                       style={{
+392:                         fontFamily: BODY,
+393:                         fontSize: 9,
+394:                         color: "#FAFAFA",
+395:                         letterSpacing: "0.06em",
+396:                         whiteSpace: "nowrap",
+397:                       }}
+398:                     >
+399:                       this week
+400:                     </span>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:42:44+05:30
+Completed At: 2026-09-22T17:42:44+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 400 to 600
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+400:                     </span>
+401:                   </button>
+402:                 </div>
+403:               )}
+404:           </div>
+405: 
+406:           <div className="flex items-center gap-[8px] shrink-0">
+407:             <div className="flex flex-col items-end">
+408:               <AnimatePresence mode="wait">
+409:                 <motion.p
+410:                   key={`saved-${daySaved}`}
+411:                   initial={{ opacity: 0, y: 4 }}
+412:                   animate={{ opacity: 1, y: 0 }}
+413:                   exit={{ opacity: 0 }}
+414:                   transition={{ duration: 0.15 }}
+415:                   style={{
+416:                     fontFamily: HEAD,
+417:                     fontSize: 24,
+418:                     color: GREEN,
+419:                     lineHeight: 1,
+420:                     top: "-0.72px",
+421:                     position: "relative",
+422:                   }}
+423:                 >
+424:                   ₹{daySaved.toFixed(0)}
+425:                 </motion.p>
+426:               </AnimatePresence>
+427:               <p
+428:                 style={{
+429:                   fontSize: 8,
+430:                   color: "rgba(28,46,42,0.42)",
+431:                   letterSpacing: "0.07em",
+432:                   textTransform: "uppercase",
+433:                 }}
+434:               >
+435:                 saved
+436:               </p>
+437:             </div>
+438:             <div
+439:               style={{
+440:                 width: 1,
+441:                 height: 24,
+442:                 background: "rgba(28,46,42,0.1)",
+443:               }}
+444:             />
+445:             <div className="flex flex-col items-end">
+446:               <AnimatePresence mode="wait">
+447:                 <motion.p
+448:                   key={`spent-${daySpent}`}
+449:                   initial={{ opacity: 0, y: 4 }}
+450:                   animate={{ opacity: 1, y: 0 }}
+451:                   exit={{ opacity: 0 }}
+452:                   transition={{ duration: 0.15 }}
+453:                   style={{
+454:                     fontFamily: HEAD,
+455:                     fontSize: 24,
+456:                     color:
+457:                       daySpent > 0
+458:                         ? "rgba(180,50,30,0.75)"
+459:                         : "rgba(28,46,42,0.3)",
+460:                     lineHeight: 1,
+461:                     top: "-0.72px",
+462:                     position: "relative",
+463:                   }}
+464:                 >
+465:                   ₹{daySpent.toFixed(0)}
+466:                 </motion.p>
+467:               </AnimatePresence>
+468:               <p
+469:                 style={{
+470:                   fontSize: 8,
+471:                   color:
+472:                     daySpent > 0
+473:                       ? "rgba(180,50,30,0.45)"
+474:                       : "rgba(28,46,42,0.35)",
+475:                   letterSpacing: "0.07em",
+476:                   textTransform: "uppercase",
+477:                 }}
+478:               >
+479:                 spent
+480:               </p>
+481:             </div>
+482:           </div>
+483:         </div>
+484: 
+485:         {/* Calendar strip — day mode only (week nav lives by the label) */}
+486:         {viewMode === "day" && (
+487:           <div className="w-full mt-[8px]">
+488:             <RecentDaysStrip
+489:               selectedDate={selectedDate}
+490:               onSelectDate={onSelectDate}
+491:               flowersByDate={flowersByDate}
+492:             />
+493:           </div>
+494:         )}
+495: 
+496:         <div className="w-full pt-[4px]">
+497:           <div
+498:             style={{
+499:               height: 1,
+500:               background: "rgba(28,46,42,0.08)",
+501:               width: "100%",
+502:             }}
+503:           />
+504:         </div>
+505:       </div>
+506:     </div>
+507:   );
+508: }
+509: 
+510: // ── Inline audio player ───────────────────────────────────────────
+511: function VoicePlayer({ src }: { src: string }) {
+512:   const audioRef = useRef<HTMLAudioElement>(null);
+513:   const [playing, setPlaying] = useState(false);
+514:   const [progress, setProgress] = useState(0);
+515:   function toggle() {
+516:     const el = audioRef.current;
+517:     if (!el) return;
+518:     if (playing) {
+519:       el.pause();
+520:       setPlaying(false);
+521:     } else {
+522:       el.play();
+523:       setPlaying(true);
+524:     }
+525:   }
+526:   return (
+527:     <div
+528:       className="flex items-center gap-3 rounded-2xl px-4 py-3"
+529:       style={{
+530:         background: "rgba(77,170,87,0.08)",
+531:         border: "1px solid rgba(77,170,87,0.25)",
+532:       }}
+533:     >
+534:       <audio
+535:         ref={audioRef}
+536:         src={src}
+537:         onTimeUpdate={() => {
+538:           const el = audioRef.current;
+539:           if (el?.duration)
+540:             setProgress(el.currentTime / el.duration);
+541:         }}
+542:         onEnded={() => {
+543:           setPlaying(false);
+544:           setProgress(0);
+545:         }}
+546:       />
+547:       <button
+548:         onClick={toggle}
+549:         className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+550:         style={{ background: TEAL }}
+551:       >
+552:         {playing ? (
+553:           <Pause className="w-4 h-4 text-white" fill="white" />
+554:         ) : (
+555:           <Play className="w-4 h-4 text-white" fill="white" />
+556:         )}
+557:       </button>
+558:       <div
+559:         className="flex-1 rounded-full overflow-hidden"
+560:         style={{ height: 4, background: "rgba(28,46,42,0.12)" }}
+561:       >
+562:         <div
+563:           style={{
+564:             width: `${progress * 100}%`,
+565:             height: "100%",
+566:             background: TEAL,
+567:             borderRadius: 99,
+568:             transition: "width 0.1s",
+569:           }}
+570:         />
+571:       </div>
+572:       <p
+573:         style={{
+574:           fontSize: 11,
+575:           color: TEAL,
+576:           opacity: 0.55,
+577:           flexShrink: 0,
+578:         }}
+579:       >
+580:         voice note
+581:       </p>
+582:     </div>
+583:   );
+584: }
+585: // ── Flower interface ──────────────────────────────────────────────
+586: function ScribbleOverlay({
+587:   size,
+588:   animate = false,
+589: }: {
+590:   size: number;
+591:   animate?: boolean;
+592: }) {
+593:   return (
+594:     <motion.img
+595:       src={ScribblePng}
+596:       alt=""
+597:       initial={
+598:         animate ? { opacity: 0, scale: 0.8 } : { opacity: 1 }
+599:       }
+600:       animate={{ opacity: 1, scale: 1 }}
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:43:01+05:30
+Completed At: 2026-09-22T17:43:01+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1550 to 1650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1550:                       link.download = `flower-${selectedFlower.id}.png`;
+1551:                       link.click();
+1552:                     }
+1553:                   }}
+1554:                   className="flex-1 transition-all active:scale-[0.97]"
+1555:                   style={{
+1556:                     background: "transparent",
+1557:                     color: "#1C2E2A",
+1558:                     fontFamily: HEAD,
+1559:                     fontSize: 13,
+1560:                     letterSpacing: "2px",
+1561:                     textTransform: "uppercase",
+1562:                     padding: "14px 10px",
+1563:                     border: "1.5px solid #d0ccc8",
+1564:                     borderRadius: 6,
+1565:                     cursor: "pointer",
+1566:                   }}
+1567:                 >
+1568:                   Save Ticket
+1569:                 </button>
+1570: 
+1571:                 <button
+1572:                   onClick={handleClose}
+1573:                   className="flex-1 transition-all active:scale-[0.97]"
+1574:                   style={{
+1575:                     background: "#1C2E2A",
+1576:                     color: "#FAFAFA",
+1577:                     fontFamily: HEAD,
+1578:                     fontSize: 13,
+1579:                     letterSpacing: "2px",
+1580:                     textTransform: "uppercase",
+1581:                     padding: "14px 10px",
+1582:                     border: "none",
+1583:                     borderRadius: 6,
+1584:                     cursor: "pointer",
+1585:                   }}
+1586:                 >
+1587:                   Discard
+1588:                 </button>
+1589:               </div>
+1590:             </div>
+1591:           </motion.div>
+1592:         </div>
+1593:       </div>
+1594:     </>
+1595:   );
+1596: }
+1597: 
+1598: // ── Main Garden ───────────────────────────────────────────────────
+1599: export function Garden() {
+1600:   const [allFlowers, setAllFlowers] = useState<Flower[]>([]);
+1601:   const [selectedFlower, setSelectedFlower] =
+1602:     useState<Flower | null>(null);
+1603:   const [activeDate, setActiveDate] = useState(new Date());
+1604:   // Display mode — "day" shows one day, "week" shows the whole ISO week.
+1605:   // Always starts in day mode (e.g. when returning from PlantFlower).
+1606:   const [viewMode, setViewMode] = useState<"day" | "week">(
+1607:     "day",
+1608:   );
+1609:   const [snapshotting, setSnapshotting] = useState(false);
+1610:   const [snapshotUrl, setSnapshotUrl] = useState<string | null>(
+1611:     null,
+1612:   );
+1613: 
+1614:   function deleteFlower(id: number) {
+1615:     const updated = allFlowers.filter((f) => f.id !== id);
+1616:     setAllFlowers(updated);
+1617:     localStorage.setItem(
+1618:       "gardenFlowers",
+1619:       JSON.stringify(updated),
+1620:     );
+1621:     setSelectedFlower(null);
+1622:   }
+1623: 
+1624:   function downloadSnapshot() {
+1625:     if (!snapshotUrl) return;
+1626:     const link = document.createElement("a");
+1627:     link.href = snapshotUrl;
+1628:     link.download = `garden-snapshot-${Date.now()}.png`;
+1629:     link.click();
+1630:   }
+1631: 
+1632:   useEffect(() => {
+1633:     const garden = localStorage.getItem("gardenFlowers");
+1634:     if (!garden) return;
+1635:     let flowers = JSON.parse(garden);
+1636: 
+1637:     // One-time cleanup: strip the old seeded demo flowers
+1638:     // (they had no drawing and emotion name "Intentional").
+1639:     if (!localStorage.getItem("demoCleaned")) {
+1640:       flowers = flowers.filter(
+1641:         (f: any) =>
+1642:           !(!f.drawing && f.emotion?.name === "Intentional"),
+1643:       );
+1644:       localStorage.setItem(
+1645:         "gardenFlowers",
+1646:         JSON.stringify(flowers),
+1647:       );
+1648:       localStorage.removeItem("demoSeeded");
+1649:       localStorage.setItem("demoCleaned", "true");
+1650:     }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:43:07+05:30
+Completed At: 2026-09-22T17:43:07+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1650 to 1800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1650:     }
+1651: 
+1652:     setAllFlowers(flowers);
+1653:   }, []);
+1654: 
+1655:   const flowersByDate = new Map<string, number>();
+1656:   allFlowers.forEach((f) => {
+1657:     const k = dateKey(new Date(f.date));
+1658:     flowersByDate.set(k, (flowersByDate.get(k) ?? 0) + 1);
+1659:   });
+1660: 
+1661:   // Day mode → flowers from the selected day. Week mode → all flowers
+1662:   // in the same Monday-anchored ISO week as the selected day.
+1663:   const visibleFlowers = allFlowers.filter((f) =>
+1664:     viewMode === "week"
+1665:       ? sameWeek(new Date(f.date), activeDate)
+1666:       : sameDay(new Date(f.date), activeDate),
+1667:   );
+1668: 
+1669:   const daySaved = visibleFlowers
+1670:     .filter((f) => f.state === "bloomed")
+1671:     .reduce((s, f) => s + (f.amount || 0), 0);
+1672:   const daySpent = visibleFlowers
+1673:     .filter((f) => f.state === "wilted")
+1674:     .reduce((s, f) => s + (f.amount || 0), 0);
+1675:   const isToday = sameDay(activeDate, new Date());
+1676: 
+1677:   const canvasContainerRef = useRef<HTMLDivElement>(null);
+1678: 
+1679:   useEffect(() => {
+1680:     const handleSnapshot = async () => {
+1681:       if (!canvasContainerRef.current) return;
+1682:       const el = canvasContainerRef.current;
+1683: 
+1684:       const originalBg = el.style.background;
+1685:       const originalPadding = el.style.padding;
+1686:       el.style.background = "#FAFAFA";
+1687:       el.style.padding = "16px 16px 64px 16px";
+1688: 
+1689:       const textEl = document.createElement("div");
+1690:       textEl.innerText =
+1691:         viewMode === "week"
+1692:           ? `${weekRangeLabel(activeDate)}, ${activeDate.getFullYear()}`
+1693:           : activeDate.toLocaleDateString("en-US", {
+1694:               month: "long",
+1695:               day: "numeric",
+1696:               year: "numeric",
+1697:             });
+1698:       textEl.style.position = "absolute";
+1699:       textEl.style.bottom = "20px";
+1700:       textEl.style.left = "0";
+1701:       textEl.style.width = "100%";
+1702:       textEl.style.textAlign = "center";
+1703:       textEl.style.fontFamily = "'Slabo 13px', serif";
+1704:       textEl.style.fontSize = "12px";
+1705:       textEl.style.color = "#4DAA57";
+1706:       textEl.style.letterSpacing = "0.05em";
+1707:       el.appendChild(textEl);
+1708: 
+1709:       setSnapshotting(true);
+1710:       try {
+1711:         const images = Array.from(el.querySelectorAll("img"));
+1712: 
+1713:         // Wait for every image to fully load AND decode, so none are
+1714:         // missing from the snapshot. Each has a 4s fallback timeout.
+1715:         await Promise.all(
+1716:           images.map(
+1717:             (img) =>
+1718:               new Promise<void>((resolve) => {
+1719:                 const done = () => resolve();
+1720:                 const timeout = setTimeout(done, 4000);
+1721:                 const finish = async () => {
+1722:                   try {
+1723:                     if ((img as any).decode) await img.decode();
+1724:                   } catch {}
+1725:                   clearTimeout(timeout);
+1726:                   done();
+1727:                 };
+1728:                 if (img.complete && img.naturalWidth > 0) {
+1729:                   finish();
+1730:                 } else {
+1731:                   img.onload = finish;
+1732:                   img.onerror = () => {
+1733:                     clearTimeout(timeout);
+1734:                     done();
+1735:                   };
+1736:                 }
+1737:               }),
+1738:           ),
+1739:         );
+1740: 
+1741:         // Let layout/paint settle (two frames) before capturing.
+1742:         await new Promise((r) =>
+1743:           requestAnimationFrame(() => requestAnimationFrame(r)),
+1744:         );
+1745: 
+1746:         const { toPng } = await import("html-to-image");
+1747: 
+1748:         // Crisp on retina/iPhone (cap at 3 to avoid huge files / memory).
+1749:         const pixelRatio = Math.min(
+1750:           3,
+1751:           Math.max(2, window.devicePixelRatio || 2),
+1752:         );
+1753:         const opts = { cacheBust: true, pixelRatio };
+1754: 
+1755:         // Render twice — Safari/iOS often drops images on the first pass;
+1756:         // the second pass has them warm in cache and renders complete.
+1757:         await toPng(el, opts);
+1758:         const dataUrl = await toPng(el, opts);
+1759: 
+1760:         // Show a preview (download / share) instead of auto-downloading.
+1761:         setSnapshotUrl(dataUrl);
+1762:       } catch (err) {
+1763:         console.error("Failed to generate image", err);
+1764:       } finally {
+1765:         el.style.background = originalBg;
+1766:         el.style.padding = originalPadding;
+1767:         if (textEl.parentNode === el) el.removeChild(textEl);
+1768:         setSnapshotting(false);
+1769:       }
+1770:     };
+1771:     window.addEventListener("trigger-snapshot", handleSnapshot);
+1772:     return () =>
+1773:       window.removeEventListener(
+1774:         "trigger-snapshot",
+1775:         handleSnapshot,
+1776:       );
+1777:   }, [activeDate, viewMode]);
+1778: 
+1779:   // Snapshot loader overlay (rendered via portal so it's never captured)
+1780:   const snapshotOverlay = snapshotting
+1781:     ? createPortal(
+1782:         <div
+1783:           className="fixed inset-0 flex flex-col items-center justify-center"
+1784:           style={{
+1785:             zIndex: 100000,
+1786:             background: "rgba(250,250,250,0.7)",
+1787:             backdropFilter: "blur(6px)",
+1788:           }}
+1789:         >
+1790:           <motion.div
+1791:             animate={{ rotate: 360 }}
+1792:             transition={{
+1793:               duration: 0.9,
+1794:               repeat: Infinity,
+1795:               ease: "linear",
+1796:             }}
+1797:             style={{
+1798:               width: 34,
+1799:               height: 34,
+1800:               borderRadius: "50%",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:44:03+05:30
+Completed At: 2026-09-22T17:44:03+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1800 to 2000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1800:               borderRadius: "50%",
+1801:               border: "3px solid rgba(28,46,42,0.15)",
+1802:               borderTopColor: GREEN,
+1803:             }}
+1804:           />
+1805:           <p
+1806:             style={{
+1807:               marginTop: 14,
+1808:               fontFamily: HEAD,
+1809:               fontStyle: "italic",
+1810:               fontSize: 14,
+1811:               color: TEAL,
+1812:             }}
+1813:           >
+1814:             saving your garden…
+1815:           </p>
+1816:         </div>,
+1817:         document.body,
+1818:       )
+1819:     : null;
+1820: 
+1821:   // Snapshot preview with Download / Share actions.
+1822:   const snapshotPreview = createPortal(
+1823:     <AnimatePresence>
+1824:       {snapshotUrl && (
+1825:         <motion.div
+1826:           initial={{ opacity: 0 }}
+1827:           animate={{ opacity: 1 }}
+1828:           exit={{ opacity: 0 }}
+1829:           onClick={() => setSnapshotUrl(null)}
+1830:           className="fixed inset-0 flex flex-col items-center justify-center px-6"
+1831:           style={{
+1832:             zIndex: 100001,
+1833:             background: "rgba(28,46,42,0.55)",
+1834:             backdropFilter: "blur(10px)",
+1835:           }}
+1836:         >
+1837:           <motion.div
+1838:             initial={{ scale: 0.92, y: 16, opacity: 0 }}
+1839:             animate={{ scale: 1, y: 0, opacity: 1 }}
+1840:             exit={{ scale: 0.95, opacity: 0 }}
+1841:             transition={{
+1842:               type: "spring",
+1843:               damping: 26,
+1844:               stiffness: 300,
+1845:             }}
+1846:             onClick={(e) => e.stopPropagation()}
+1847:             className="w-full flex flex-col items-center"
+1848:             style={{ maxWidth: 380 }}
+1849:           >
+1850:             {/* Close */}
+1851:             <button
+1852:               onClick={() => setSnapshotUrl(null)}
+1853:               className="self-end mb-2 w-9 h-9 flex items-center justify-center rounded-full"
+1854:               style={{
+1855:                 background: "rgba(250,250,250,0.9)",
+1856:                 boxShadow: "0 2px 10px rgba(28,46,42,0.2)",
+1857:               }}
+1858:             >
+1859:               <X className="w-4 h-4" style={{ color: TEAL }} />
+1860:             </button>
+1861: 
+1862:             {/* Preview image */}
+1863:             <img
+1864:               src={snapshotUrl}
+1865:               alt="garden snapshot"
+1866:               className="w-full rounded-2xl"
+1867:               style={{
+1868:                 maxHeight: "62vh",
+1869:                 objectFit: "contain",
+1870:                 boxShadow: "0 16px 48px rgba(28,46,42,0.35)",
+1871:                 background: "#FAFAFA",
+1872:               }}
+1873:             />
+1874: 
+1875:             {/* Actions */}
+1876:             <div className="w-full flex mt-4">
+1877:               <button
+1878:                 onClick={downloadSnapshot}
+1879:                 className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl transition-transform active:scale-95"
+1880:                 style={{
+1881:                   background: GREEN,
+1882:                   color: "#FAFAFA",
+1883:                   fontFamily: BODY,
+1884:                   fontSize: 13,
+1885:                   letterSpacing: "0.04em",
+1886:                   boxShadow: "0 8px 24px rgba(77,170,87,0.35)",
+1887:                 }}
+1888:               >
+1889:                 <Download className="w-4 h-4" /> Download
+1890:               </button>
+1891:             </div>
+1892:           </motion.div>
+1893:         </motion.div>
+1894:       )}
+1895:     </AnimatePresence>,
+1896:     document.body,
+1897:   );
+1898: 
+1899:   return (
+1900:     <div
+1901:       className="fixed inset-0"
+1902:       style={{
+1903:         fontFamily: BODY,
+1904:         background: BG,
+1905:         color: TEAL,
+1906:         overflow: "hidden",
+1907:       }}
+1908:     >
+1909:       {snapshotOverlay}
+1910:       {snapshotPreview}
+1911:       {/* ── Full-bleed garden canvas (static, no panning) ── */}
+1912:       <div
+1913:         ref={canvasContainerRef}
+1914:         className="absolute inset-0"
+1915:         style={{ background: "transparent" }}
+1916:       >
+1917:         {/* Cross-fade between day/week views (keyed by viewMode) */}
+1918:         <AnimatePresence mode="wait">
+1919:           <motion.div
+1920:             key={viewMode}
+1921:             className="absolute inset-0"
+1922:             initial={{ opacity: 0 }}
+1923:             animate={{ opacity: 1 }}
+1924:             exit={{ opacity: 0 }}
+1925:             transition={{ duration: 0.28, ease: "easeInOut" }}
+1926:           >
+1927:             {visibleFlowers.length === 0 && (
+1928:               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+1929:                 <p
+1930:                   style={{
+1931:                     fontFamily: HEAD,
+1932:                     fontStyle: "italic",
+1933:                     fontSize: 15,
+1934:                     color: "rgba(32,70,84,0.22)",
+1935:                     textAlign: "center",
+1936:                   }}
+1937:                 >
+1938:                   {viewMode === "week"
+1939:                     ? "nothing planted this week · tap to start"
+1940:                     : isToday
+1941:                       ? "your garden is waiting to bloom"
+1942:                       : "nothing planted this day"}
+1943:                 </p>
+1944:               </div>
+1945:             )}
+1946:             {(() => {
+1947:               const zMap = buildZIndexMap(
+1948:                 visibleFlowers.map((f) => ({
+1949:                   id: f.id,
+1950:                   sortY: flowerPct(f).y,
+1951:                 })),
+1952:               );
+1953:               return visibleFlowers.map((flower, idx) => (
+1954:                 <GardenFlower
+1955:                   key={flower.id}
+1956:                   flower={flower}
+1957:                   index={idx}
+1958:                   zIndex={zMap.get(flower.id) ?? 1}
+1959:                   animateIn={viewMode === "day"}
+1960:                   onTap={() => setSelectedFlower(flower)}
+1961:                 />
+1962:               ));
+1963:             })()}
+1964:           </motion.div>
+1965:         </AnimatePresence>
+1966:       </div>
+1967:       {/* end canvasContainerRef */}
+1968: 
+1969:       {/* ── Floating header — constrained to max-width, matches nav pills ── */}
+1970:       <div
+1971:         className="absolute top-0 left-0 right-0 z-20 pointer-events-none flex justify-center transition-opacity duration-200"
+1972:         style={{
+1973:           opacity: selectedFlower ? 0 : 1,
+1974:           pointerEvents: selectedFlower ? "none" : undefined,
+1975:         }}
+1976:       >
+1977:         <div
+1978:           className="w-full pointer-events-auto"
+1979:           style={{ maxWidth: 480 }}
+1980:         >
+1981:           <GardenHeader
+1982:             selectedDate={activeDate}
+1983:             onSelectDate={setActiveDate}
+1984:             flowersByDate={flowersByDate}
+1985:             daySaved={daySaved}
+1986:             daySpent={daySpent}
+1987:             isToday={isToday}
+1988:             viewMode={viewMode}
+1989:             onToggleMode={() =>
+1990:               setViewMode((m) => (m === "day" ? "week" : "day"))
+1991:             }
+1992:           />
+1993:         </div>
+1994:       </div>
+1995: 
+1996:       {/* ── Flower detail sheet — receipt style ── */}
+1997: 
+1998:       {createPortal(
+1999:         <AnimatePresence>
+2000:           {selectedFlower && (
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:47:10+05:30
+Completed At: 2026-09-22T17:47:10+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 255 to 285
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+255:   );
+256: }
+257: 
+258: // ── Header ────────────────────────────────────────────────────────
+259: interface HeaderProps {
+260:   selectedDate: Date;
+261:   onSelectDate: (d: Date) => void;
+262:   flowersByDate: Map<string, number>;
+263:   daySaved: number;
+264:   daySpent: number;
+265:   isToday: boolean;
+266:   viewMode?: "day" | "week";
+267:   onToggleMode?: () => void;
+268: }
+269: 
+270: export function GardenHeader({
+271:   selectedDate,
+272:   onSelectDate,
+273:   flowersByDate,
+274:   daySaved,
+275:   daySpent,
+276:   isToday,
+277:   viewMode = "day",
+278:   onToggleMode,
+279: }: HeaderProps) {
+280:   const shortDate = selectedDate.toLocaleDateString("en-US", {
+281:     month: "short",
+282:     day: "numeric",
+283:   });
+284:   const dateLabel =
+285:     viewMode === "week"
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:47:24+05:30
+Completed At: 2026-09-22T17:47:24+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 496 to 506
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+496:         <div className="w-full pt-[4px]">
+497:           <div
+498:             style={{
+499:               height: 1,
+500:               background: "rgba(28,46,42,0.08)",
+501:               width: "100%",
+502:             }}
+503:           />
+504:         </div>
+505:       </div>
+506:     </div>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:47:31+05:30
+Completed At: 2026-09-22T17:47:31+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2195
+Total Bytes: 70307
+Showing lines 1980 to 1995
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1980:         >
+1981:           <GardenHeader
+1982:             selectedDate={activeDate}
+1983:             onSelectDate={setActiveDate}
+1984:             flowersByDate={flowersByDate}
+1985:             daySaved={daySaved}
+1986:             daySpent={daySpent}
+1987:             isToday={isToday}
+1988:             viewMode={viewMode}
+1989:             onToggleMode={() =>
+1990:               setViewMode((m) => (m === "day" ? "week" : "day"))
+1991:             }
+1992:           />
+1993:         </div>
+1994:       </div>
+1995: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T17:50:21+05:30
+Completed At: 2026-09-22T17:50:22+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 2169
+Total Bytes: 69505
+Showing lines 460 to 500
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+460:                         ? "rgba(180,50,30,0.75)"
+461:                         : "rgba(28,46,42,0.3)",
+462:                     lineHeight: 1,
+463:                     top: "-0.72px",
+464:                     position: "relative",
+465:                   }}
+466:                 >
+467:                   ₹{daySpent.toFixed(0)}
+468:                 </motion.p>
+469:               </AnimatePresence>
+470:               <p
+471:           <div
+472:             style={{
+473:               height: 1,
+474:               background: "rgba(28,46,42,0.08)",
+475:               width: "100%",
+476:             }}
+477:           />
+478:         </div>
+479:       </div>
+480:     </div>
+481:   );
+482: }
+483: 
+484: // ── Inline audio player ───────────────────────────────────────────
+485: function VoicePlayer({ src }: { src: string }) {
+486:   const audioRef = useRef<HTMLAudioElement>(null);
+487:   const [playing, setPlaying] = useState(false);
+488:   const [progress, setProgress] = useState(0);
+489:   function toggle() {
+490:     const el = audioRef.current;
+491:     if (!el) return;
+492:     if (playing) {
+493:       el.pause();
+494:       setPlaying(false);
+495:     } else {
+496:       el.play();
+497:       setPlaying(true);
+498:     }
+499:   }
+500:   return (
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T18:05:14+05:30
+Completed At: 2026-09-22T18:05:14+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 1717
+Total Bytes: 61211
+Showing lines 490 to 510
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+490:         {viewMode === "day" && (
+491:           <div className="w-full mt-[8px]">
+492:             <RecentDaysStrip
+493:               selectedDate={selectedDate}
+494:               onSelectDate={onSelectDate}
+495:               flowersByDate={flowersByDate}
+496:             />
+497:           </div>
+498:         )}
+499: 
+500:         <div className="w-full pt-[4px]">
+501:           <div
+502:             style={{
+503:               height: 1,
+504:               background: "rgba(28,46,42,0.08)",
+505:               width: "100%",
+506:             }}
+507:           />
+508:         </div>
+509:       </div>
+510:     </div>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T18:05:28+05:30
+Completed At: 2026-09-22T18:05:28+05:30
+File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`
+Total Lines: 1719
+Total Bytes: 61269
+Showing lines 1620 to 1650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1620:       noiseFilter.connect(noiseGain);
+1621:       noiseGain.connect(ctx.destination);
+1622: 
+1623:       noise.start();
+1624: 
+1625:       if (navigator.vibrate) navigator.vibrate(10);
+1626:     } catch (e) {}
+1627:   }, []);
+1628: 
+1629:   return (
+1630:     // Outer wrapper owns the centering transform (plain CSS — framer-motion
+1631:     // must NOT manage it, or it overrides translate(-50%,-50%)).
+1632:     <div
+1633:       className="absolute flex flex-col items-center"
+1634:       style={{
+1635:         left: `${xPct}%`,
+1636:         top: `${yPct}%`,
+1637:         transform: "translate(-50%, -50%)",
+1638:         opacity: wilted ? 0.55 : 1,
+1639:         lineHeight: 0,
+1640:         zIndex,
+1641:       }}
+1642:     >
+1643:       <motion.button
+1644:         initial={animateIn ? { scale: 0, opacity: 0 } : false}
+1645:         animate={{ scale: 1, opacity: 1 }}
+1646:         transition={
+1647:           animateIn
+1648:             ? {
+1649:                 delay: index * 0.06,
+1650:                 type: "spring",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T18:14:23+05:30
+Tool is running as a background task with task id: c21dc0bf-37fe-4883-81f9-19dc190a2baa/task-235
+Task Description: python -c "
+import json
+with open(r'C:\Users\singh\.gemini\antigravity-ide\brain\c21dc0bf-37fe-4883-81f9-19dc190a2baa\.system_generated\logs\transcript_full.jsonl', 'r', encoding='utf-8') as f:
+    for line in f:
+        data = json.loads(line)
+        if 'content' in data and 'File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`' in data['content']:
+            print('==== NEW VIEW_FILE OUTPUT ====')
+            print(data['content'])
+" > d:\demo\Canopy\garden_recovery.txt
+Task logs are available at: file:///C:/Users/singh/.gemini/antigravity-ide/brain/c21dc0bf-37fe-4883-81f9-19dc190a2baa/.system_generated/tasks/task-235.log
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T18:14:54+05:30
+Tool is running as a background task with task id: c21dc0bf-37fe-4883-81f9-19dc190a2baa/task-243
+Task Description: node -e "const fs = require('fs'); const readline = require('readline'); const rl = readline.createInterface({ input: fs.createReadStream('C:\\\\Users\\\\singh\\\\.gemini\\\\antigravity-ide\\\\brain\\\\c21dc0bf-37fe-4883-81f9-19dc190a2baa\\\\.system_generated\\\\logs\\\\transcript_full.jsonl') }); rl.on('line', (line) => { const data = JSON.parse(line); if (data.content && data.content.includes('File Path: `file:///d:/demo/Canopy/src/app/components/Garden.tsx`')) { fs.appendFileSync('d:\\\\demo\\\\Canopy\\\\garden_recovery.txt', '==== NEW VIEW_FILE OUTPUT ====\n' + data.content + '\n'); } });"
+Task logs are available at: file:///C:/Users/singh/.gemini/antigravity-ide/brain/c21dc0bf-37fe-4883-81f9-19dc190a2baa/.system_generated/tasks/task-243.log
+
+==== NEW CHUNK ====
+
+Created At: 2026-09-22T18:18:17+05:30
+Tool is running as a background task with task id: c21dc0bf-37fe-4883-81f9-19dc190a2baa/task-287
+Task Description: node -e "
+const fs = require('fs');
+const readline = require('readline');
+const rl = readline.createInterface({
+  input: fs.createReadStream('C:\\\\Users\\\\singh\\\\.gemini\\\\antigravity-ide\\\\brain\\\\c21dc0bf-37fe-4883-81f9-19dc190a2baa\\\\.system_generated\\\\logs\\\\transcript_full.jsonl')
+});
+let output = '';
+rl.on('line', (line) => {
+  const data = JSON.parse(line);
+  if (data.content && data.content.includes('file:///d:/demo/Canopy/src/app/components/Garden.tsx')) {
+    output += '\n\n==== NEW CHUNK ====\n\n' + data.content;
+  }
+});
+rl.on('close', () => {
+  fs.writeFileSync('d:\\\\demo\\\\Canopy\\\\recovered_garden.txt', output);
+  console.log('Recovery complete!');
+});
+"
+Task logs are available at: file:///C:/Users/singh/.gemini/antigravity-ide/brain/c21dc0bf-37fe-4883-81f9-19dc190a2baa/.system_generated/tasks/task-287.log

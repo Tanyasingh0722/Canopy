@@ -14,13 +14,15 @@ const RULE = "#A3A3A3";
 interface ReceiptModalProps {
   selectedFlower: Flower;
   onClose: () => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: any) => void;
+  entryNumber?: number;
 }
 
 export function ReceiptModal({
   selectedFlower,
   onClose,
   onDelete,
+  entryNumber,
 }: ReceiptModalProps) {
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
 
@@ -215,9 +217,7 @@ export function ReceiptModal({
       onPointerUp={handlePointerUp}
       className="fixed inset-0 z-[101] overflow-y-auto no-scrollbar flex flex-col items-center py-10 px-4"
       style={{
-        background: "rgba(0,0,0,0.6)",
-        backdropFilter: "blur(8px)",
-        WebkitBackdropFilter: "blur(8px)",
+        background: "rgba(0,0,0,0.85)",
         overscrollBehaviorY: "contain",
         scrollbarWidth: "none",
         msOverflowStyle: "none",
@@ -241,8 +241,6 @@ export function ReceiptModal({
           }}
           className="relative w-full flex flex-col pointer-events-auto"
           style={{
-            isolation: "isolate",
-            willChange: "transform, opacity",
             filter: "drop-shadow(0 20px 48px rgba(0,0,0,0.32)) drop-shadow(0 4px 12px rgba(0,0,0,0.1))",
           }}
         >
@@ -270,7 +268,7 @@ export function ReceiptModal({
                     color: "rgba(28,46,42,0.45)",
                   }}
                 >
-                  CANOPY RECEIPT
+                  CANOPY RECEIPT{entryNumber !== undefined ? ` : ${String(entryNumber).padStart(3, '0')}` : ""}
                 </span>
               </div>
               <button 
@@ -337,7 +335,7 @@ export function ReceiptModal({
                     padding: "3px 8px",
                     borderRadius: "4px",
                     fontFamily: HEAD,
-                    fontSize: 15,
+                    fontSize: 12,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     opacity: 0.9,

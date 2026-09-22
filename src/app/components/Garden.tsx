@@ -1039,6 +1039,7 @@ export function Garden() {
           {selectedFlower && (
             <ReceiptModal
               selectedFlower={selectedFlower}
+              entryNumber={allFlowers.findIndex(f => f.id === selectedFlower.id) + 1}
               onClose={() => setSelectedFlower(null)}
               onDelete={(id) => deleteFlower(id)}
             />

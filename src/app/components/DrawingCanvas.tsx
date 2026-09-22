@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Undo2, Trash2, Check, X, Eraser } from "lucide-react";
+import { Undo2, Trash2, Check, X, Eraser, Search, Plus, Minus } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -658,20 +658,21 @@ export function DrawingCanvas() {
       ? emotion.hex
       : "#5A9469";
 
-  const palette = [moodHex, ...PALETTE.slice(0, 15)];
+  const palette = [moodHex, "#1C1C1A", "#C1392B", "#5B8FD4", "#F4A93B"];
 
   const [activeColor, setActiveColor] = useState(moodHex);
   const [activeWidth, setActiveWidth] = useState("M");
   const [brushMode] = useState<"versa">("versa");
   const [isEraser, setIsEraser] = useState(false);
   const [popover, setPopover] = useState<
-    "color" | "width" | null
+    "color" | "width" | "zoom" | null
   >(null);
   const [hasDrawn, setHasDrawn] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const colorInputRef = useRef<HTMLInputElement>(null);
 
   const prompt = useRef(getPrompt()).current;
   const timerDone = timeLeft <= 0;
@@ -1152,7 +1153,7 @@ export function DrawingCanvas() {
 
   const activeR = WIDTHS.find((w) => w.id === activeWidth)!.r;
 
-  function togglePopover(p: "color" | "width") {
+  function togglePopover(p: "color" | "width" | "zoom") {
     setPopover((prev) => (prev === p ? null : p));
   }
 
@@ -1210,16 +1211,17 @@ export function DrawingCanvas() {
 
       {/* ── Top row ── */}
       <div
-        className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 sm:px-4"
+        className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 sm:px-5 pointer-events-none z-30"
         style={{
           paddingTop:
             "max(env(safe-area-inset-top, 0px), 14px)",
         }}
       >
-        <div style={{ minWidth: 72 }}>
+        {/* Left: Urge Item tag */}
+        <div className="flex items-center min-w-0 pointer-events-auto">
           {urgeItem ? (
             <div
-              className="flex items-center gap-2 px-3 py-2 rounded-full"
+              className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full max-w-[125px] sm:max-w-[200px]"
               style={floatCard}
             >
               <div
@@ -1232,17 +1234,15 @@ export function DrawingCanvas() {
                 }}
               />
               <span
+                className="truncate"
                 style={{
                   fontFamily: SPACE,
-                  fontSize: 13,
-                  letterSpacing: "0.06em",
+                  fontSize: 12,
+                  letterSpacing: "0.05em",
                   color: INK,
-                  whiteSpace: "nowrap",
                 }}
               >
-                {urgeItem.length > 24
-                  ? urgeItem.slice(0, 24) + "…"
-                  : urgeItem}
+                {urgeItem}
               </span>
             </div>
           ) : (
@@ -1250,8 +1250,9 @@ export function DrawingCanvas() {
           )}
         </div>
 
+        {/* Center: Timer ring */}
         <div
-          className="px-3 py-2 rounded-2xl"
+          className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-2xl pointer-events-auto"
           style={floatCard}
         >
           <TimerRing
@@ -1261,331 +1262,478 @@ export function DrawingCanvas() {
           />
         </div>
 
-        <div
-          className="flex items-center gap-2"
-          style={{ minWidth: 72, justifyContent: "flex-end" }}
-        >
-          <div
-            className="flex items-center gap-1 mr-2 px-2 py-1 rounded-full"
-            style={floatCard}
-          >
-            <button
-              onClick={() =>
-                setZoom((z) => Math.max(0.5, z - 0.25))
-              }
-              className="w-6 h-6 flex items-center justify-center"
-            >
-              <span
-                style={{
-                  fontSize: 16,
-                  lineHeight: 1,
-                  color: INK,
-                }}
-              >
-                -
-              </span>
-            </button>
-            <span
-              style={{
-                fontFamily: SPACE,
-                fontSize: 10,
-                color: INK,
-                width: 36,
-                textAlign: "center",
-              }}
-            >
-              {Math.round(zoom * 100)}%
-            </span>
-            <button
-              onClick={() =>
-                setZoom((z) => Math.min(3, z + 0.25))
-              }
-              className="w-6 h-6 flex items-center justify-center"
-            >
-              <span
-                style={{
-                  fontSize: 16,
-                  lineHeight: 1,
-                  color: INK,
-                }}
-              >
-                +
-              </span>
-            </button>
-          </div>
+        {/* Right: Exit / Cross button */}
+        <div className="flex items-center justify-end pointer-events-auto">
           <button
             onClick={() => setShowExitConfirm(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-full"
+            className="w-9 h-9 flex items-center justify-center rounded-full transition-colors duration-150 hover:bg-[rgba(28,46,42,0.06)]"
             style={floatCard}
+            aria-label="Close canvas"
           >
             <X className="w-4 h-4" style={{ color: INK }} />
           </button>
         </div>
       </div>
 
-      {/* ── Bottom row ── */}
+      {/* ── Bottom unified toolbar ── */}
       <div
-        className="absolute bottom-0 left-0 right-0 flex items-end justify-between px-3 sm:px-4"
+        className="absolute bottom-0 left-0 right-0 flex justify-center px-3 sm:px-4 pointer-events-none z-30"
         style={{
           paddingBottom:
-            "max(env(safe-area-inset-bottom, 0px), 24px)",
+            "max(env(safe-area-inset-bottom, 0px), 20px)",
         }}
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Left toolbar */}
-        <div
-          className="flex items-center gap-2"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Color */}
-          <div className="relative">
-            <AnimatePresence>
-              {popover === "color" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.92 }}
-                  transition={{
-                    type: "spring",
-                    damping: 28,
-                    stiffness: 380,
-                  }}
-                  className="absolute bottom-12 left-1/2 rounded-2xl p-3"
-                  style={{
-                    ...floatCard,
-                    transform: "translateX(-50%)",
-                    width: 280,
-                  }}
-                >
-                  <p
-                    style={{
-                      fontFamily: SPACE,
-                      fontSize: 7,
-                      letterSpacing: "0.14em",
-                      color: "rgba(28,46,42,0.4)",
-                      textTransform: "uppercase",
-                      marginBottom: 8,
-                    }}
-                  >
-                    color
-                  </p>
-                  <div className="grid grid-cols-8 gap-3">
-                    {palette.map((hex, i) => (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          setActiveColor(hex);
-                          setIsEraser(false);
-                          setPopover(null);
-                        }}
-                        className="rounded-full"
-                        style={{
-                          width: 22,
-                          height: 22,
-                          background: hex,
-                          boxShadow:
-                            activeColor === hex && !isEraser
-                              ? `0 0 0 2px ${BG}, 0 0 0 3.5px ${hex}`
-                              : "none",
-                          transform:
-                            activeColor === hex && !isEraser
-                              ? "scale(1.18)"
-                              : "scale(1)",
-                          transition:
-                            "transform 0.15s, box-shadow 0.15s",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => togglePopover("color")}
-              className="w-11 h-11 flex items-center justify-center rounded-full"
-              style={{
-                ...floatCard,
-                border:
-                  popover === "color"
-                    ? `2px solid ${activeColor}66`
-                    : floatCard.border,
-              }}
-            >
-              <div
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: "50%",
-                  background: isEraser
-                    ? "rgba(26,36,32,0.15)"
-                    : activeColor,
-                  boxShadow: isEraser
-                    ? "none"
-                    : `0 1px 8px ${activeColor}88`,
-                }}
-              />
-            </motion.button>
-          </div>
+        {/* Hidden color input for custom picker */}
+        <input
+          ref={colorInputRef}
+          type="color"
+          value={activeColor}
+          onChange={(e) => {
+            setActiveColor(e.target.value);
+            setIsEraser(false);
+          }}
+          style={{
+            position: "absolute",
+            opacity: 0,
+            width: 0,
+            height: 0,
+            pointerEvents: "none",
+          }}
+        />
 
-          {/* Width */}
-          <div className="relative">
-            <AnimatePresence>
-              {popover === "width" && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.92 }}
-                  transition={{
-                    type: "spring",
-                    damping: 28,
-                    stiffness: 380,
-                  }}
-                  className="absolute bottom-12 left-1/2 rounded-2xl p-3"
+        <div className="relative flex items-center pointer-events-auto">
+          {/* ── The unified floating bar ── */}
+          <div
+            className="flex items-center gap-0 rounded-full"
+            style={{
+              ...floatCard,
+              padding: "5px 6px",
+              boxShadow: "0 4px 24px rgba(28,46,42,0.12), 0 1px 6px rgba(28,46,42,0.08)",
+            }}
+          >
+            {/* Zoom button with vertical popover */}
+            <div className="relative flex items-center justify-center">
+              <motion.button
+                whileTap={{ scale: 0.92 }}
+                onClick={() => togglePopover("zoom")}
+                className="h-9 px-2.5 flex items-center gap-1.5 rounded-full transition-all duration-150"
+                style={{
+                  background:
+                    popover === "zoom"
+                      ? "rgba(28,46,42,0.08)"
+                      : "transparent",
+                }}
+                title="Zoom level"
+              >
+                <Search
+                  className="w-3.5 h-3.5"
+                  style={{ color: "rgba(28,46,42,0.6)" }}
+                />
+                <span
                   style={{
-                    ...floatCard,
-                    transform: "translateX(-50%)",
-                    minWidth: 120,
+                    fontFamily: SPACE,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: INK,
                   }}
                 >
-                  <p
-                    style={{
-                      fontFamily: SPACE,
-                      fontSize: 7,
-                      letterSpacing: "0.14em",
-                      color: "rgba(28,46,42,0.4)",
-                      textTransform: "uppercase",
-                      marginBottom: 8,
-                    }}
-                  >
-                    width
-                  </p>
-                  <div className="flex flex-col gap-1.5">
-                    {WIDTHS.map((w) => {
-                      const active = activeWidth === w.id;
-                      return (
-                        <button
-                          key={w.id}
-                          onClick={() => {
-                            setActiveWidth(w.id);
-                            setPopover(null);
-                          }}
-                          className="h-9 flex items-center px-3 rounded-xl"
+                  {Math.round(zoom * 100)}%
+                </span>
+              </motion.button>
+
+              {/* Vertical Zoom Popover */}
+              <AnimatePresence>
+                {popover === "zoom" && (
+                  <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.92 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.92 }}
+                      transition={{
+                        type: "spring",
+                        damping: 26,
+                        stiffness: 360,
+                      }}
+                      className="flex flex-col items-center p-1.5 rounded-2xl"
+                      style={{
+                        ...floatCard,
+                        boxShadow:
+                          "0 8px 32px rgba(28,46,42,0.14), 0 2px 10px rgba(28,46,42,0.08)",
+                      }}
+                    >
+                      <motion.button
+                        whileTap={{ scale: 0.88 }}
+                        onClick={() =>
+                          setZoom((z) => Math.min(3, +(z + 0.25).toFixed(2)))
+                        }
+                        disabled={zoom >= 3}
+                        className="w-8 h-8 flex items-center justify-center rounded-xl transition-colors hover:bg-[rgba(28,46,42,0.06)] disabled:opacity-30 disabled:pointer-events-none"
+                        title="Zoom In"
+                      >
+                        <Plus className="w-4 h-4" style={{ color: INK }} />
+                      </motion.button>
+
+                      <button
+                        onClick={() => setZoom(1)}
+                        className="px-2 py-1 my-0.5 rounded-lg transition-colors hover:bg-[rgba(28,46,42,0.06)]"
+                        title="Reset zoom to 100%"
+                      >
+                        <span
                           style={{
-                            background: active
-                              ? `${isEraser ? "#1A2420" : activeColor}18`
-                              : "transparent",
-                            border: `1.5px solid ${active ? (isEraser ? "#1A2420" : activeColor) + "55" : "transparent"}`,
+                            fontFamily: SPACE,
+                            fontSize: 10,
+                            fontWeight: 600,
+                            color: INK,
+                            letterSpacing: "0.04em",
+                            whiteSpace: "nowrap",
                           }}
                         >
-                          <div
-                            style={{
-                              height:
-                                w.id === "S"
-                                  ? 1.5
-                                  : w.id === "M"
-                                    ? 3.5
-                                    : 6,
-                              borderRadius: 99,
-                              width: "100%",
-                              background: active
-                                ? isEraser
-                                  ? "#1A2420"
-                                  : activeColor
-                                : "rgba(26,36,32,0.25)",
-                            }}
-                          />
-                        </button>
-                      );
-                    })}
+                          {Math.round(zoom * 100)}%
+                        </span>
+                      </button>
+
+                      <motion.button
+                        whileTap={{ scale: 0.88 }}
+                        onClick={() =>
+                          setZoom((z) => Math.max(0.5, +(z - 0.25).toFixed(2)))
+                        }
+                        disabled={zoom <= 0.5}
+                        className="w-8 h-8 flex items-center justify-center rounded-xl transition-colors hover:bg-[rgba(28,46,42,0.06)] disabled:opacity-30 disabled:pointer-events-none"
+                        title="Zoom Out"
+                      >
+                        <Minus className="w-4 h-4" style={{ color: INK }} />
+                      </motion.button>
+                    </motion.div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => togglePopover("width")}
-              className="w-11 h-11 flex items-center justify-center rounded-full px-3"
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Divider */}
+            <div
               style={{
-                ...floatCard,
-                border:
-                  popover === "width"
-                    ? `2px solid rgba(28,46,42,0.3)`
-                    : floatCard.border,
+                width: 1,
+                height: 22,
+                background: "rgba(28,46,42,0.1)",
+                margin: "0 3px",
+                flexShrink: 0,
               }}
+            />
+
+            {/* Eraser */}
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={() => {
+                setIsEraser((e) => !e);
+                setPopover(null);
+              }}
+              className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-150"
+              style={{
+                background: isEraser
+                  ? "rgba(28,46,42,0.1)"
+                  : "transparent",
+              }}
+              title="Eraser"
             >
-              <div
+              <Eraser
+                className="w-[16px] h-[16px]"
                 style={{
-                  height:
-                    activeR === 5
-                      ? 1.5
-                      : activeR === 12
-                        ? 3.5
-                        : 6,
-                  width: 24,
-                  borderRadius: 99,
-                  background: isEraser
-                    ? "rgba(26,36,32,0.35)"
-                    : activeColor,
+                  color: isEraser ? INK : "rgba(28,46,42,0.4)",
                 }}
+              />
+            </motion.button>
+
+            {/* Color swatch button with Popover */}
+            <div className="relative flex items-center justify-center">
+              <motion.button
+                whileTap={{ scale: 0.88 }}
+                onClick={() => togglePopover("color")}
+                className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-150"
+                style={{
+                  background:
+                    popover === "color"
+                      ? `${activeColor}18`
+                      : "transparent",
+                }}
+                title="Color palette"
+              >
+                <div
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    background: isEraser
+                      ? "rgba(28,46,42,0.2)"
+                      : activeColor,
+                    boxShadow: isEraser
+                      ? "none"
+                      : `0 1px 6px ${activeColor}66`,
+                    border:
+                      activeColor === "#FAFAFA" && !isEraser
+                        ? "1px solid rgba(0,0,0,0.12)"
+                        : "none",
+                    transition: "background 0.15s, box-shadow 0.15s",
+                  }}
+                />
+              </motion.button>
+
+              {/* Color Popover */}
+              <AnimatePresence>
+                {popover === "color" && (
+                  <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.92 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.92 }}
+                      transition={{
+                        type: "spring",
+                        damping: 26,
+                        stiffness: 360,
+                      }}
+                      className="rounded-[18px] px-3.5 py-2.5"
+                      style={{
+                        ...floatCard,
+                        boxShadow:
+                          "0 8px 40px rgba(28,46,42,0.14), 0 2px 12px rgba(28,46,42,0.08)",
+                      }}
+                    >
+                      {/* Compact color row: 5 colors + picker */}
+                      <div className="flex items-center gap-2.5">
+                        {palette.map((hex, i) => {
+                          const isSel = activeColor === hex && !isEraser;
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => {
+                                setActiveColor(hex);
+                                setIsEraser(false);
+                                setPopover(null);
+                              }}
+                              className="rounded-full transition-all duration-150 shrink-0"
+                              style={{
+                                width: 28,
+                                height: 28,
+                                background: hex,
+                                boxShadow: isSel
+                                  ? `0 0 0 2px ${BG}, 0 0 0 3.5px ${hex}`
+                                  : `inset 0 -1px 2px rgba(0,0,0,0.12)`,
+                                transform: isSel ? "scale(1.15)" : "scale(1)",
+                                border:
+                                  hex === "#FAFAFA"
+                                    ? "1px solid rgba(0,0,0,0.1)"
+                                    : "none",
+                              }}
+                            />
+                          );
+                        })}
+
+                        {/* Custom color picker button */}
+                        <button
+                          onClick={() => colorInputRef.current?.click()}
+                          className="rounded-full transition-all duration-150 shrink-0"
+                          style={{
+                            width: 28,
+                            height: 28,
+                            background:
+                              "conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)",
+                            border: "2px solid rgba(255,255,255,0.9)",
+                            boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+                          }}
+                          title="Custom color"
+                        />
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Divider */}
+            <div
+              style={{
+                width: 1,
+                height: 22,
+                background: "rgba(28,46,42,0.1)",
+                margin: "0 3px",
+                flexShrink: 0,
+              }}
+            />
+
+            {/* Width button with Popover */}
+            <div className="relative flex items-center justify-center">
+              <motion.button
+                whileTap={{ scale: 0.88 }}
+                onClick={() => togglePopover("width")}
+                className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-150"
+                style={{
+                  background:
+                    popover === "width"
+                      ? "rgba(28,46,42,0.08)"
+                      : "transparent",
+                }}
+                title="Stroke width"
+              >
+                <div
+                  style={{
+                    height:
+                      activeR === 8
+                        ? 1.5
+                        : activeR === 18
+                          ? 3.5
+                          : 6,
+                    width: 20,
+                    borderRadius: 99,
+                    background: isEraser
+                      ? "rgba(28,46,42,0.35)"
+                      : activeColor,
+                    transition: "background 0.15s",
+                  }}
+                />
+              </motion.button>
+
+              {/* Width Popover */}
+              <AnimatePresence>
+                {popover === "width" && (
+                  <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.92 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.92 }}
+                      transition={{
+                        type: "spring",
+                        damping: 26,
+                        stiffness: 360,
+                      }}
+                      className="rounded-[20px] p-3.5"
+                      style={{
+                        ...floatCard,
+                        minWidth: 170,
+                        boxShadow:
+                          "0 8px 40px rgba(28,46,42,0.14), 0 2px 12px rgba(28,46,42,0.08)",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontFamily: SPACE,
+                          fontSize: 8,
+                          letterSpacing: "0.14em",
+                          color: "rgba(28,46,42,0.4)",
+                          textTransform: "uppercase",
+                          marginBottom: 8,
+                        }}
+                      >
+                        stroke width
+                      </p>
+                      <div className="flex flex-col gap-1.5">
+                        {(["S", "M", "L"] as const).map((wId) => {
+                          const w = WIDTHS.find((x) => x.id === wId)!;
+                          const active = activeWidth === w.id;
+                          const label =
+                            w.id === "S"
+                              ? "Thin"
+                              : w.id === "M"
+                                ? "Mid"
+                                : "Maiden";
+                          const lineH =
+                            w.id === "S" ? 1.5 : w.id === "M" ? 3.5 : 6;
+                          return (
+                            <button
+                              key={w.id}
+                              onClick={() => {
+                                setActiveWidth(w.id);
+                                setPopover(null);
+                              }}
+                              className="flex items-center gap-3 h-9 px-3 rounded-xl transition-all duration-150"
+                              style={{
+                                background: active
+                                  ? `${isEraser ? "#1A2420" : activeColor}15`
+                                  : "transparent",
+                                border: `1.5px solid ${active ? (isEraser ? "#1A2420" : activeColor) + "44" : "transparent"}`,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: SPACE,
+                                  fontSize: 10,
+                                  fontWeight: active ? 600 : 400,
+                                  color: active
+                                    ? INK
+                                    : "rgba(28,46,42,0.5)",
+                                  letterSpacing: "0.06em",
+                                  width: 44,
+                                  textAlign: "left",
+                                }}
+                              >
+                                {label}
+                              </span>
+                              <div
+                                style={{
+                                  flex: 1,
+                                  height: lineH,
+                                  borderRadius: 99,
+                                  background: active
+                                    ? isEraser
+                                      ? "#1A2420"
+                                      : activeColor
+                                    : "rgba(26,36,32,0.2)",
+                                  transition: "background 0.15s",
+                                }}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Divider */}
+            <div
+              style={{
+                width: 1,
+                height: 22,
+                background: "rgba(28,46,42,0.1)",
+                margin: "0 3px",
+                flexShrink: 0,
+              }}
+            />
+
+            {/* Undo */}
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={handleUndo}
+              className="w-9 h-9 flex items-center justify-center rounded-full transition-colors duration-150 hover:bg-[rgba(28,46,42,0.05)]"
+              title="Undo"
+            >
+              <Undo2
+                className="w-[15px] h-[15px]"
+                style={{ color: "rgba(28,46,42,0.55)" }}
+              />
+            </motion.button>
+
+            {/* Delete / Clear */}
+            <motion.button
+              whileTap={{ scale: 0.88 }}
+              onClick={handleClear}
+              className="w-9 h-9 flex items-center justify-center rounded-full transition-colors duration-150 hover:bg-[rgba(180,50,30,0.06)]"
+              title="Clear canvas"
+            >
+              <Trash2
+                className="w-[15px] h-[15px]"
+                style={{ color: "rgba(180,50,30,0.55)" }}
               />
             </motion.button>
           </div>
 
-          {/* Eraser */}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              setIsEraser((e) => !e);
-              setPopover(null);
-            }}
-            className="w-11 h-11 flex items-center justify-center rounded-full"
-            style={{
-              ...floatCard,
-              background: isEraser
-                ? "rgba(26,36,32,0.08)"
-                : floatCard.background,
-              border: isEraser
-                ? "1.5px solid rgba(26,36,32,0.28)"
-                : floatCard.border,
-            }}
-          >
-            <Eraser
-              className="w-4 h-4"
-              style={{
-                color: isEraser ? INK : "rgba(26,36,32,0.45)",
-              }}
-            />
-          </motion.button>
-        </div>
-
-        {/* Right cluster */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleUndo}
-            className="w-9 h-9 flex items-center justify-center rounded-full"
-            style={floatCard}
-          >
-            <Undo2 className="w-4 h-4" style={{ color: INK }} />
-          </button>
-          <button
-            onClick={handleClear}
-            className="w-9 h-9 flex items-center justify-center rounded-full"
-            style={{
-              ...floatCard,
-              border: "1px solid rgba(180,50,30,0.16)",
-            }}
-          >
-            <Trash2
-              className="w-4 h-4"
-              style={{ color: "rgba(180,50,30,0.65)" }}
-            />
-          </button>
-
+          {/* Done button — appears after timer, floats to the right */}
           <AnimatePresence>
             {timerDone && (
               <motion.button
                 key="done"
-                initial={{ opacity: 0, scale: 0.85, x: 10 }}
+                initial={{ opacity: 0, scale: 0.85, x: -8 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.85 }}
                 transition={{
@@ -1595,7 +1743,7 @@ export function DrawingCanvas() {
                 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={handleDone}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl"
+                className="flex items-center gap-2 px-5 py-3 rounded-full ml-3"
                 style={{
                   background: INK,
                   boxShadow: "0 8px 24px rgba(28,46,42,0.3)",

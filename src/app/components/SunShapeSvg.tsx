@@ -6,9 +6,16 @@ interface SunShapeSvgProps {
   height?: number;
   className?: string;
   pressing?: boolean;
+  style?: React.CSSProperties;
 }
 
-export function SunShapeSvg({ width = 150, height = 150, className, pressing = false }: SunShapeSvgProps) {
+export function SunShapeSvg({
+  width = 150,
+  height = 150,
+  className,
+  pressing = false,
+  style,
+}: SunShapeSvgProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,8 +42,7 @@ export function SunShapeSvg({ width = 150, height = 150, className, pressing = f
         justifyContent: "center",
         background: "none",
         border: "none",
-        transform: pressing ? "rotate(360deg) scale(1.18)" : "rotate(0deg) scale(1)",
-        transition: pressing ? "transform 8s linear" : "transform 1.2s ease-out",
+        ...style,
       }}
     />
   );
