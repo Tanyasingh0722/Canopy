@@ -131,9 +131,9 @@ export function ReceiptModal({
         }}
       >
         <div
-          className="relative w-full px-4 flex flex-col"
+          className="relative w-full flex flex-col"
           style={{
-            filter: "drop-shadow(0 16px 40px rgba(0,0,0,0.32))",
+            filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
           }}
         >
           {/* TICKET PAPER */}
@@ -156,7 +156,7 @@ export function ReceiptModal({
             onClick={(e) => e.stopPropagation()}
           >
             {/* CONTENT INSIDE PAPER */}
-            <div className="pt-10 px-6 pb-2">
+            <div className="pt-10 px-10 pb-2">
               
               {/* Optional Drawing */}
               {selectedFlower.drawing && (
