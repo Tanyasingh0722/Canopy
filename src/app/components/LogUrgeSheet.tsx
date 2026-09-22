@@ -363,13 +363,13 @@ const EMOTIONS: {
   color: string;
   Icon: (p: { s: string }) => JSX.Element;
 }[] = [
-  { name: "Stressed", color: FOREST, Icon: WaveIcon },
-  { name: "FOMO", color: BLUE, Icon: SunIcon },
-  { name: "Craving", color: "#D4708A", Icon: FlameIcon },
-  { name: "Bored", color: "#D97706", Icon: LinesIcon },
-  { name: "Excited", color: "#E07B39", Icon: LightningIcon },
-  { name: "Intentional", color: "#5A9469", Icon: PlantIcon },
-];
+    { name: "Stressed", color: FOREST, Icon: WaveIcon },
+    { name: "FOMO", color: BLUE, Icon: SunIcon },
+    { name: "Craving", color: "#D4708A", Icon: FlameIcon },
+    { name: "Bored", color: "#D97706", Icon: LinesIcon },
+    { name: "Excited", color: "#E07B39", Icon: LightningIcon },
+    { name: "Intentional", color: "#5A9469", Icon: PlantIcon },
+  ];
 
 const FOR_OPTIONS = [
   { id: "myself", label: "myself", Icon: MyselfIcon },
@@ -734,8 +734,8 @@ export function LogUrgeSheet({
                 placeholder="new headphones…"
                 className="flex-1 bg-transparent outline-none"
                 style={{
-                  fontFamily: HEAD,
-                  fontSize: 18,
+                  fontFamily: BODY,
+                  fontSize: 16,
                   color: itemName ? INK : "rgba(26,36,32,0.45)",
                   caretColor: BLUE,
                 }}
@@ -747,15 +747,38 @@ export function LogUrgeSheet({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  const files = Array.from(
-                    e.target.files || [],
-                  );
-
-                  const urls = files.map((file) =>
-                    URL.createObjectURL(file),
-                  );
-
-                  setImageFiles((prev) => [...prev, ...urls]);
+                  const files = Array.from(e.target.files || []);
+                  files.forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      const img = new Image();
+                      img.onload = () => {
+                        const canvas = document.createElement("canvas");
+                        const MAX_SIZE = 400;
+                        let { width, height } = img;
+                        if (width > height) {
+                          if (width > MAX_SIZE) {
+                            height = Math.round((height * MAX_SIZE) / width);
+                            width = MAX_SIZE;
+                          }
+                        } else {
+                          if (height > MAX_SIZE) {
+                            width = Math.round((width * MAX_SIZE) / height);
+                            height = MAX_SIZE;
+                          }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext("2d");
+                        ctx?.drawImage(img, 0, 0, width, height);
+                        const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
+                        setImageFiles((prev) => [...prev, dataUrl]);
+                      };
+                      img.src = ev.target?.result as string;
+                    };
+                    reader.readAsDataURL(file);
+                  });
+                  e.target.value = "";
                 }}
               />
               <button
@@ -854,12 +877,12 @@ export function LogUrgeSheet({
                                 }
                                 className="w-full py-2 text-center transition-colors"
                                 onMouseEnter={(e) =>
-                                  (e.currentTarget.style.background =
-                                    "rgba(77,170,87,0.08)")
+                                (e.currentTarget.style.background =
+                                  "rgba(77,170,87,0.08)")
                                 }
                                 onMouseLeave={(e) =>
-                                  (e.currentTarget.style.background =
-                                    "transparent")
+                                (e.currentTarget.style.background =
+                                  "transparent")
                                 }
                                 style={{
                                   fontFamily: HEAD,

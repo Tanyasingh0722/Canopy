@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Trash2, X } from "lucide-react";
 import { Flower } from "../types";
@@ -22,6 +22,8 @@ export function ReceiptModal({
   onClose,
   onDelete,
 }: ReceiptModalProps) {
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
+
   const zigzagClipPaper = useMemo(() => {
     const pts: string[] = ["0% 0%", "100% 0%"];
     const TEETH = 34;
@@ -419,7 +421,8 @@ export function ReceiptModal({
               )}
 
               {/* Item Images */}
-              {selectedFlower.photos && selectedFlower.photos.length > 0 && (
+              {selectedFlower.photos &&
+                selectedFlower.photos.filter((src) => !brokenImages[src]).length > 0 && (
                 <div className="mb-4">
                   <p
                     style={{
@@ -432,16 +435,24 @@ export function ReceiptModal({
                     ITEM IMAGE
                   </p>
                   <div className="flex gap-3">
-                    {selectedFlower.photos.map((src, i) => (
+                    {selectedFlower.photos
+                      .filter((src) => !brokenImages[src])
+                      .map((src, i) => (
                       <div
                         key={i}
-                        className="bg-white border p-1"
+                        className="bg-white border p-1 rounded"
                         style={{ borderColor: "rgba(0,0,0,0.1)" }}
                       >
                         <img
                           src={src}
-                          alt=""
-                          className="w-16 h-16 object-cover"
+                          alt="Item"
+                          className="w-16 h-16 object-cover rounded"
+                          onError={() =>
+                            setBrokenImages((prev) => ({
+                              ...prev,
+                              [src]: true,
+                            }))
+                          }
                         />
                       </div>
                     ))}
