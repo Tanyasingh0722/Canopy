@@ -28,6 +28,7 @@ import {
   Download,
 } from "lucide-react";
 import ScribblePng from "../../imports/115.png";
+import { ReceiptModal } from "./ReceiptModal";
 
 const BG = "#FAFAFA";
 const TEAL = "#1C2E2A";
@@ -267,6 +268,7 @@ interface HeaderProps {
   isToday: boolean;
   viewMode?: "day" | "week";
   onToggleMode?: () => void;
+  hideDivider?: boolean;
 }
 
 export function GardenHeader({
@@ -278,6 +280,7 @@ export function GardenHeader({
   isToday,
   viewMode = "day",
   onToggleMode,
+  hideDivider = false,
 }: HeaderProps) {
   const shortDate = selectedDate.toLocaleDateString("en-US", {
     month: "short",
@@ -495,22 +498,24 @@ export function GardenHeader({
           </div>
         )}
 
-        <div className="w-full pt-[4px]">
-          <div
-            style={{
-              height: 1,
-              background: "rgba(28,46,42,0.08)",
-              width: "100%",
-            }}
-          />
-        </div>
+        {!hideDivider && (
+          <div className="w-full pt-[4px]">
+            <div
+              style={{
+                height: 1,
+                background: "rgba(28,46,42,0.08)",
+                width: "100%",
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
 // ── Inline audio player ───────────────────────────────────────────
-function VoicePlayer({ src }: { src: string }) {
+export function VoicePlayer({ src }: { src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -1022,6 +1027,7 @@ export function Garden() {
             onToggleMode={() =>
               setViewMode((m) => (m === "day" ? "week" : "day"))
             }
+            hideDivider={!!selectedFlower}
           />
         </div>
       </div>
@@ -1030,502 +1036,13 @@ export function Garden() {
 
       {createPortal(
         <AnimatePresence>
-          {selectedFlower &&
-            (() => {
-              const hex =
-                selectedFlower.emotion?.hex || "#4DAA57";
-              const borderColor = `${hex}55`;
-              const glowShadow = `0 0 40px ${hex}40, 0 24px 64px rgba(32,70,84,0.14)`;
-              const accentText = TEAL;
-              const pillBg = `${hex}28`;
-              const pillBorder = `${hex}50`;
-
-              return (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setSelectedFlower(null)}
-                  className="fixed inset-0 flex items-end justify-center px-4 pb-6"
-                  style={{
-                    background: `${hex}18`,
-                    backdropFilter: "blur(12px)",
-                    zIndex: 9999,
-                  }}
-                >
-                  <motion.div
-                    initial={{ y: 64, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: 64, opacity: 0 }}
-                    transition={{
-                      type: "spring",
-                      damping: 28,
-                      stiffness: 320,
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-full max-w-sm rounded-3xl overflow-hidden relative"
-                    style={{
-                      background: "#FAFAFA",
-                      boxShadow: glowShadow,
-                      border: `1.5px solid ${borderColor}`,
-                      maxHeight: "82vh",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <button
-                      onClick={() =>
-                        deleteFlower(selectedFlower.id)
-                      }
-                      className="absolute top-4 left-4 z-10 w-9 h-9 flex items-center justify-center rounded-full transition-transform active:scale-95"
-                      style={{
-                        background: "rgba(252,252,252,0.9)",
-                        color: "rgba(180,40,40,0.8)",
-                        border:
-                          "1px solid rgba(180,40,40,0.15)",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                      }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M3 6h18" />
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                      </svg>
-                    </button>
-                    <div style={{ overflowY: "auto", flex: 1 }}>
-                      {/* Drawing */}
-                      <div
-                        className="flex items-center justify-center pt-5 pb-4 px-4"
-                        style={{ minHeight: 100 }}
-                      >
-                        {selectedFlower.drawing ? (
-                          <img
-                            src={selectedFlower.drawing}
-                            alt="flower drawing"
-                            style={{
-                              maxHeight: 100,
-                              maxWidth: "50%",
-                              objectFit: "contain",
-                              filter:
-                                selectedFlower.state ===
-                                "wilted"
-                                  ? "grayscale(1) brightness(0.58) drop-shadow(0px 6px 16px rgba(32,70,84,0.18))"
-                                  : `drop-shadow(0px 6px 18px ${hex}60)`,
-                            }}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              width: 80,
-                              height: 80,
-                              borderRadius: "50%",
-                              background: `${hex}44`,
-                              boxShadow: `0 0 32px ${hex}50`,
-                            }}
-                          />
-                        )}
-                      </div>
-
-                      {/* Photos */}
-                      {selectedFlower.photos &&
-                        selectedFlower.photos.length > 0 && (
-                          <div className="px-5 pt-1">
-                            <div
-                              className="flex gap-4 overflow-x-auto pb-2"
-                              style={{
-                                scrollbarWidth: "none",
-                              }}
-                            >
-                              <div className="flex justify-center py-2">
-                                <div className="relative h-[90px] w-[300px]">
-                                  {selectedFlower.photos.map(
-                                    (src, i) => (
-                                      <div
-                                        key={i}
-                                        className="absolute bg-white p-1 rounded-[4px] shadow-md"
-                                        style={{
-                                          left: `${i * 30}px`,
-                                          top: 0,
-                                          transform: `rotate(${
-                                            i === 0
-                                              ? -6
-                                              : i === 1
-                                                ? -2
-                                                : i === 2
-                                                  ? 3
-                                                  : 7
-                                          }deg)`,
-                                          zIndex: i + 1,
-                                        }}
-                                      >
-                                        <img
-                                          src={src}
-                                          alt=""
-                                          className="w-[56px] h-[56px] object-cover rounded-[2px]"
-                                        />
-                                      </div>
-                                    ),
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                      {/* Feeling */}
-                      {selectedFlower.emotion && (
-                        <div
-                          className="mx-5 mb-3 flex items-center gap-3 rounded-2xl px-4 py-3"
-                          style={{
-                            background: pillBg,
-                            border: `1px solid ${pillBorder}`,
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: 18,
-                              height: 18,
-                              borderRadius: "50%",
-                              background: hex,
-                              flexShrink: 0,
-                              boxShadow: `0 2px 10px ${hex}80`,
-                            }}
-                          />
-                          <div>
-                            <p
-                              style={{
-                                fontSize: 9,
-                                color: accentText,
-                                opacity: 0.45,
-                                letterSpacing: "0.08em",
-                                textTransform: "uppercase",
-                              }}
-                            >
-                              feeling
-                            </p>
-                            <p
-                              style={{
-                                fontSize: 14,
-                                color: accentText,
-                                marginTop: 1,
-                                fontFamily: HEAD,
-                                fontStyle: "italic",
-                              }}
-                            >
-                              {selectedFlower.emotion.name}
-                            </p>
-                          </div>
-                          <div className="ml-auto">
-                            <span
-                              className="rounded-full px-2.5 py-1"
-                              style={{
-                                background:
-                                  selectedFlower.state ===
-                                  "bloomed"
-                                    ? `${GREEN}28`
-                                    : "rgba(32,70,84,0.08)",
-                                border: `1px solid ${selectedFlower.state === "bloomed" ? `${GREEN}50` : "rgba(32,70,84,0.1)"}`,
-                                fontSize: 11,
-                                color:
-                                  selectedFlower.state ===
-                                  "bloomed"
-                                    ? GREEN
-                                    : TEAL,
-                              }}
-                            >
-                              {selectedFlower.state ===
-                              "bloomed"
-                                ? "🌸 bloomed"
-                                : "🥀 wilted"}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="px-5 pb-3">
-                        <p
-                          style={{
-                            fontSize: 10,
-                            color: accentText,
-                            opacity: 0.35,
-                            letterSpacing: "0.07em",
-                            textTransform: "uppercase",
-                            marginBottom: 12,
-                            textAlign: "right",
-                          }}
-                        >
-                          {new Date(
-                            selectedFlower.date,
-                          ).toLocaleDateString("en-US", {
-                            weekday: "long",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </p>
-
-                        {(selectedFlower.itemName ||
-                          selectedFlower.amount > 0 ||
-                          selectedFlower.whoFor) && (
-                          <div
-                            className="rounded-2xl overflow-hidden mb-3"
-                            style={{
-                              background: `${hex}10`,
-                              border: `1px solid ${hex}30`,
-                            }}
-                          >
-                            {selectedFlower.itemName && (
-                              <div
-                                className="flex items-center gap-3 px-4 py-3"
-                                style={{
-                                  borderBottom:
-                                    selectedFlower.amount > 0 ||
-                                    selectedFlower.whoFor
-                                      ? `1px solid ${hex}20`
-                                      : "none",
-                                }}
-                              >
-                                <Tag
-                                  className="w-3.5 h-3.5 flex-shrink-0"
-                                  style={{
-                                    color: accentText,
-                                    opacity: 0.45,
-                                  }}
-                                />
-                                <div>
-                                  <p
-                                    style={{
-                                      fontSize: 9,
-                                      color: accentText,
-                                      opacity: 0.38,
-                                      letterSpacing: "0.07em",
-                                      textTransform:
-                                        "uppercase",
-                                    }}
-                                  >
-                                    item
-                                  </p>
-                                  <p
-                                    style={{
-                                      fontSize: 15,
-                                      color: accentText,
-                                      marginTop: 1,
-                                    }}
-                                  >
-                                    {selectedFlower.itemName}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                            {selectedFlower.amount > 0 && (
-                              <div
-                                className="flex items-center gap-3 px-4 py-3"
-                                style={{
-                                  borderBottom:
-                                    selectedFlower.whoFor
-                                      ? `1px solid ${hex}20`
-                                      : "none",
-                                }}
-                              >
-                                <DollarSign
-                                  className="w-3.5 h-3.5 flex-shrink-0"
-                                  style={{
-                                    color: accentText,
-                                    opacity: 0.45,
-                                  }}
-                                />
-                                <div>
-                                  <p
-                                    style={{
-                                      fontSize: 9,
-                                      color: accentText,
-                                      opacity: 0.38,
-                                      letterSpacing: "0.07em",
-                                      textTransform:
-                                        "uppercase",
-                                    }}
-                                  >
-                                    price
-                                  </p>
-                                  <p
-                                    style={{
-                                      fontFamily: HEAD,
-                                      fontSize: 17,
-                                      color: accentText,
-                                      marginTop: 1,
-                                    }}
-                                  >
-                                    ₹
-                                    {selectedFlower.amount.toFixed(
-                                      2,
-                                    )}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                            {selectedFlower.whoFor && (
-                              <div className="flex items-center gap-3 px-4 py-3">
-                                <User
-                                  className="w-3.5 h-3.5 flex-shrink-0"
-                                  style={{
-                                    color: accentText,
-                                    opacity: 0.45,
-                                  }}
-                                />
-                                <div>
-                                  <p
-                                    style={{
-                                      fontSize: 9,
-                                      color: accentText,
-                                      opacity: 0.38,
-                                      letterSpacing: "0.07em",
-                                      textTransform:
-                                        "uppercase",
-                                    }}
-                                  >
-                                    who it's for
-                                  </p>
-                                  <p
-                                    style={{
-                                      fontSize: 15,
-                                      color: accentText,
-                                      marginTop: 1,
-                                    }}
-                                  >
-                                    {selectedFlower.whoFor}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {selectedFlower.journal && (
-                          <div
-                            className="rounded-2xl px-4 py-3 mb-3"
-                            style={{
-                              background: `${hex}10`,
-                              border: `1px solid ${hex}28`,
-                            }}
-                          >
-                            <div
-                              className="flex items-center gap-1.5 mb-2"
-                              style={{ opacity: 0.38 }}
-                            >
-                              <BookOpen
-                                className="w-3 h-3"
-                                style={{ color: accentText }}
-                              />
-                              <p
-                                style={{
-                                  fontSize: 9,
-                                  color: accentText,
-                                  letterSpacing: "0.07em",
-                                  textTransform: "uppercase",
-                                }}
-                              >
-                                reflection
-                              </p>
-                            </div>
-                            <p
-                              style={{
-                                fontFamily: HEAD,
-                                fontStyle: "italic",
-                                fontSize: 13,
-                                color: accentText,
-                                lineHeight: 1.75,
-                                opacity: 0.75,
-                              }}
-                            >
-                              {selectedFlower.journal}
-                            </p>
-                          </div>
-                        )}
-
-                        {selectedFlower.voiceNote && (
-                          <div className="mb-3">
-                            <div
-                              className="flex items-center gap-1.5 mb-2"
-                              style={{ opacity: 0.38 }}
-                            >
-                              <Mic
-                                className="w-3 h-3"
-                                style={{ color: accentText }}
-                              />
-                              <p
-                                style={{
-                                  fontSize: 9,
-                                  color: accentText,
-                                  letterSpacing: "0.07em",
-                                  textTransform: "uppercase",
-                                }}
-                              >
-                                voice note
-                              </p>
-                            </div>
-                            <VoicePlayer
-                              src={selectedFlower.voiceNote}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div
-                      className="px-5 pb-5 pt-3 flex gap-3"
-                      style={{
-                        borderTop: `1px solid ${hex}25`,
-                        background: "#FAFAFA",
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          if (selectedFlower.drawing) {
-                            const link =
-                              document.createElement("a");
-                            link.href = selectedFlower.drawing;
-                            link.download = `flower-${selectedFlower.id}.png`;
-                            link.click();
-                          }
-                        }}
-                        className="flex-1 py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-95"
-                        style={{
-                          background: `${hex}15`,
-                          color: TEAL,
-                          fontSize: 13,
-                          letterSpacing: "0.04em",
-                          fontWeight: 500,
-                        }}
-                      >
-                        <Share className="w-4 h-4" /> Download
-                      </button>
-                      <button
-                        onClick={() => setSelectedFlower(null)}
-                        className="flex-1 py-3.5 rounded-2xl transition-transform active:scale-95"
-                        style={{
-                          background: TEAL,
-                          color: "#FAFAFA",
-                          fontSize: 13,
-                          letterSpacing: "0.06em",
-                          boxShadow: `0 8px 24px rgba(28,46,42,0.2)`,
-                        }}
-                      >
-                        close
-                      </button>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              );
-            })()}
+          {selectedFlower && (
+            <ReceiptModal
+              selectedFlower={selectedFlower}
+              onClose={() => setSelectedFlower(null)}
+              onDelete={(id) => deleteFlower(id)}
+            />
+          )}
         </AnimatePresence>,
         document.body,
       )}
