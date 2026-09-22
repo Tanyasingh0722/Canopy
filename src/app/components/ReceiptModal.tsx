@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Trash2, Share, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import { Flower } from "../types";
 import { VoicePlayer } from "./Garden";
 
@@ -9,7 +9,7 @@ const GREEN = "#4DAA57";
 const RED = "#D94539";
 const HEAD = "'Passion One', sans-serif";
 const BODY = "'Slabo 13px', serif";
-const RULE = "#b6b5b1";
+const RULE = "#A3A3A3";
 
 interface ReceiptModalProps {
   selectedFlower: Flower;
@@ -60,6 +60,9 @@ export function ReceiptModal({
 
   const isBloomed = selectedFlower.state === "bloomed";
 
+  // Stable barcode pattern
+  const barcodePattern = [1.5, 2.5, 1, 1.5, 3, 1, 2.5, 1, 2, 1.5, 1];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -69,8 +72,9 @@ export function ReceiptModal({
       className="fixed inset-0 z-[101] flex flex-col items-center"
       style={{
         pointerEvents: "auto",
-        background: "rgba(0,0,0,0.58)",
-        backdropFilter: "blur(8px)",
+        background: "rgba(0,0,0,0.6)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         fontFamily: BODY,
       }}
     >
@@ -82,7 +86,7 @@ export function ReceiptModal({
         }}
       >
         <div
-          className="w-full h-[72px] flex items-center justify-between px-5 relative"
+          className="w-full h-[64px] flex items-center justify-between px-5 relative"
           style={{
             background: "#182622",
             clipPath: zigzagClipPrinter,
@@ -90,13 +94,14 @@ export function ReceiptModal({
         >
           <div className="flex-1" />
           <div className="flex items-center gap-2 flex-1 justify-center mb-1">
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN }} />
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, flexShrink: 0 }} />
             <p
               style={{
                 fontFamily: HEAD,
                 color: "#FAFAFA",
                 fontSize: 14,
                 letterSpacing: "3px",
+                whiteSpace: "nowrap",
                 opacity: 0.9,
               }}
             >
@@ -119,7 +124,7 @@ export function ReceiptModal({
       <div 
         className="w-full max-w-[420px] h-full overflow-y-auto no-scrollbar relative"
         style={{
-          paddingTop: "40px", // Starts under the printer head
+          paddingTop: "32px", // Starts under the printer head
           paddingBottom: "48px",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -145,22 +150,22 @@ export function ReceiptModal({
             style={{
               background: "#F9F8F5",
               clipPath: zigzagClipPaper,
-              paddingBottom: "24px",
+              paddingBottom: "20px",
               minHeight: "400px",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* CONTENT INSIDE PAPER */}
-            <div className="pt-12 px-8 pb-4">
+            <div className="pt-10 px-6 pb-2">
               
               {/* Optional Drawing */}
               {selectedFlower.drawing && (
-                <div className="flex justify-center mb-10">
+                <div className="flex justify-center mb-8">
                   <img
                     src={selectedFlower.drawing}
                     alt="flower drawing"
                     style={{
-                      maxHeight: 140,
+                      maxHeight: 120,
                       objectFit: "contain",
                       filter: isBloomed
                         ? "drop-shadow(0px 6px 18px rgba(77,170,87,0.25))"
@@ -171,11 +176,11 @@ export function ReceiptModal({
               )}
 
               {/* CURRENT STATE & STAMP */}
-              <div className="flex justify-between items-start mb-6 relative">
+              <div className="flex justify-between items-start mb-4 relative">
                 <div>
                   <p
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       color: "rgba(28,46,42,0.45)",
                       letterSpacing: "0.15em",
                       marginBottom: 4,
@@ -186,7 +191,7 @@ export function ReceiptModal({
                   <p
                     style={{
                       fontFamily: HEAD,
-                      fontSize: 40,
+                      fontSize: 36,
                       color: TEAL,
                       lineHeight: 1,
                     }}
@@ -202,27 +207,27 @@ export function ReceiptModal({
                     transform: isBloomed ? "rotate(-6deg)" : "rotate(6deg)",
                     border: `2px solid ${isBloomed ? GREEN : RED}`,
                     color: isBloomed ? GREEN : RED,
-                    padding: "6px 14px",
+                    padding: "4px 12px",
                     borderRadius: "4px",
                     fontFamily: HEAD,
-                    fontSize: 18,
-                    letterSpacing: "0.15em",
+                    fontSize: 22,
+                    letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    opacity: 0.85,
+                    opacity: 0.9,
                   }}
                 >
                   {isBloomed ? "APPROVED" : "REJECTED"}
                 </div>
               </div>
 
-              <div style={{ borderBottom: `1.5px dashed ${RULE}`, margin: "24px 0", opacity: 0.6 }} />
+              <div style={{ borderBottom: `1px dashed ${RULE}`, margin: "16px 0" }} />
 
               {/* Date & Time */}
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-4">
                 <p
                   style={{
                     fontFamily: HEAD,
-                    fontSize: 15,
+                    fontSize: 14,
                     color: TEAL,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
@@ -233,7 +238,7 @@ export function ReceiptModal({
                 <p
                   style={{
                     fontFamily: BODY,
-                    fontSize: 14,
+                    fontSize: 13,
                     color: "rgba(28,46,42,0.5)",
                   }}
                 >
@@ -243,18 +248,18 @@ export function ReceiptModal({
 
               {/* Subject */}
               {(selectedFlower.itemName || selectedFlower.whoFor) && (
-                <div className="mb-6">
+                <div className="mb-4">
                   <p
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       color: "rgba(28,46,42,0.45)",
                       letterSpacing: "0.15em",
-                      marginBottom: 8,
+                      marginBottom: 6,
                     }}
                   >
                     SUBJECT
                   </p>
-                  <p style={{ fontFamily: BODY, fontSize: 18, color: TEAL }}>
+                  <p style={{ fontFamily: BODY, fontSize: 16, color: TEAL }}>
                     {[selectedFlower.itemName, selectedFlower.whoFor]
                       .filter(Boolean)
                       .join(" / ")}
@@ -264,13 +269,13 @@ export function ReceiptModal({
 
               {/* Itemized Details (Journal) */}
               {selectedFlower.journal && (
-                <div className="mb-6">
+                <div className="mb-4">
                   <p
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       color: "rgba(28,46,42,0.45)",
                       letterSpacing: "0.15em",
-                      marginBottom: 8,
+                      marginBottom: 6,
                     }}
                   >
                     ITEMIZED DETAILS
@@ -278,7 +283,7 @@ export function ReceiptModal({
                   <p
                     style={{
                       fontFamily: BODY,
-                      fontSize: 17,
+                      fontSize: 16,
                       color: TEAL,
                       lineHeight: 1.5,
                     }}
@@ -290,13 +295,13 @@ export function ReceiptModal({
 
               {/* Item Images */}
               {selectedFlower.photos && selectedFlower.photos.length > 0 && (
-                <div className="mb-6">
+                <div className="mb-4">
                   <p
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       color: "rgba(28,46,42,0.45)",
                       letterSpacing: "0.15em",
-                      marginBottom: 8,
+                      marginBottom: 6,
                     }}
                   >
                     ITEM IMAGE
@@ -311,7 +316,7 @@ export function ReceiptModal({
                         <img
                           src={src}
                           alt=""
-                          className="w-20 h-20 object-cover"
+                          className="w-16 h-16 object-cover"
                         />
                       </div>
                     ))}
@@ -321,13 +326,13 @@ export function ReceiptModal({
 
               {/* Voice Note */}
               {selectedFlower.voiceNote && (
-                <div className="mb-6">
+                <div className="mb-4">
                   <p
                     style={{
-                      fontSize: 11,
+                      fontSize: 10,
                       color: "rgba(28,46,42,0.45)",
                       letterSpacing: "0.15em",
-                      marginBottom: 8,
+                      marginBottom: 6,
                     }}
                   >
                     VOICE NOTE
@@ -336,41 +341,40 @@ export function ReceiptModal({
                 </div>
               )}
 
-              <div style={{ borderBottom: `1.5px dashed ${RULE}`, margin: "24px 0", opacity: 0.6 }} />
+              <div style={{ borderBottom: `1px dashed ${RULE}`, margin: "16px 0" }} />
 
               {/* TOTAL AMOUNT */}
               {selectedFlower.amount > 0 && (
                 <>
-                  <div className="flex justify-between items-center mb-6">
+                  <div className="flex justify-between items-center mb-4">
                     <p
                       style={{
-                        fontSize: 11,
+                        fontSize: 10,
                         color: "rgba(28,46,42,0.45)",
                         letterSpacing: "0.15em",
                       }}
                     >
                       TOTAL AMOUNT
                     </p>
-                    <p style={{ fontFamily: HEAD, fontSize: 36, color: TEAL }}>
+                    <p style={{ fontFamily: HEAD, fontSize: 32, color: TEAL }}>
                       ₹{selectedFlower.amount.toFixed(2)}
                     </p>
                   </div>
-                  <div style={{ borderBottom: `1.5px dashed ${RULE}`, margin: "24px 0", opacity: 0.6 }} />
+                  <div style={{ borderBottom: `1px dashed ${RULE}`, margin: "16px 0" }} />
                 </>
               )}
 
               {/* Barcode and Branding */}
-              <div className="flex flex-col items-center mt-10 mb-8">
+              <div className="flex flex-col items-center mt-8 mb-6">
                 <div
-                  className="flex gap-[3px] mb-8 h-[80px] w-full justify-center opacity-70"
+                  className="flex gap-[2px] mb-6 h-[60px] w-full justify-center opacity-70"
                 >
-                  {Array.from({ length: 60 }).map((_, i) => (
+                  {Array.from({ length: 66 }).map((_, i) => (
                     <div
                       key={i}
                       style={{
-                        width: Math.random() > 0.6 ? 2.5 : 1.5,
+                        width: barcodePattern[i % barcodePattern.length],
                         background: TEAL,
-                        opacity: Math.random() > 0.2 ? 0.9 : 0.3,
                       }}
                     />
                   ))}
@@ -379,16 +383,16 @@ export function ReceiptModal({
                   style={{
                     fontFamily: HEAD,
                     fontStyle: "italic",
-                    fontSize: 15,
-                    color: "rgba(28,46,42,0.6)",
-                    marginBottom: 10,
+                    fontSize: 14,
+                    color: "rgba(28,46,42,0.7)",
+                    marginBottom: 8,
                   }}
                 >
                   Thank you for checking in with yourself.
                 </p>
                 <p
                   style={{
-                    fontSize: 11,
+                    fontSize: 10,
                     letterSpacing: "0.15em",
                     color: "rgba(28,46,42,0.45)",
                   }}
@@ -398,16 +402,16 @@ export function ReceiptModal({
               </div>
 
               {/* Actions */}
-              <div className="flex gap-4 justify-between mt-8 mb-4">
+              <div className="flex gap-3 justify-between mt-6">
                 <button
                   onClick={() => onDelete(selectedFlower.id)}
-                  className="w-[52px] h-[52px] shrink-0 flex items-center justify-center rounded-[12px] transition-transform active:scale-95"
+                  className="w-[44px] h-[44px] shrink-0 flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
                   style={{
                     border: `1.5px solid ${RULE}`,
                     color: "rgba(28,46,42,0.5)",
                   }}
                 >
-                  <Trash2 className="w-[20px] h-[20px]" />
+                  <Trash2 strokeWidth={1.5} className="w-[18px] h-[18px]" />
                 </button>
 
                 <button
@@ -419,26 +423,27 @@ export function ReceiptModal({
                       link.click();
                     }
                   }}
-                  className="flex-1 flex items-center justify-center gap-3 rounded-[12px] transition-transform active:scale-95"
+                  className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-[8px] transition-transform active:scale-95"
                   style={{
                     border: `1.5px solid ${RULE}`,
                     color: TEAL,
                     fontFamily: HEAD,
-                    fontSize: 15,
+                    fontSize: 14,
                     letterSpacing: "0.08em",
                   }}
                 >
-                  <Share className="w-[18px] h-[18px]" /> SAVE TICKET
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  SAVE TICKET
                 </button>
 
                 <button
                   onClick={onClose}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-[12px] transition-transform active:scale-95"
+                  className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-[8px] transition-transform active:scale-95"
                   style={{
                     background: TEAL,
                     color: "#FAFAFA",
                     fontFamily: HEAD,
-                    fontSize: 15,
+                    fontSize: 14,
                     letterSpacing: "0.08em",
                   }}
                 >
