@@ -60,103 +60,246 @@ export function ReceiptModal({
 
   const isBloomed = selectedFlower.state === "bloomed";
 
-  // Stable barcode pattern
-  const barcodePattern = [1.5, 2.5, 1, 1.5, 3, 1, 2.5, 1, 2, 1.5, 1];
+  // Authentic barcode pattern modeled directly after reference image
+  const barcodeBars = useMemo(
+    () => [
+      // 1. Tall bar at start
+      { w: 2.5, tall: true },
+      // Group 1: 6 short bars
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+      { w: 2, tall: false },
+      { w: 1, tall: false },
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+
+      // 2. Tall bar
+      { w: 2, tall: true },
+      // Group 2: 7 short bars
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 3, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+
+      // 3. Tall bar
+      { w: 1.5, tall: true },
+      // Group 3: 6 short bars
+      { w: 1, tall: false },
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+      { w: 2, tall: false },
+      { w: 1, tall: false },
+
+      // 4. Tall bar
+      { w: 2, tall: true },
+      // Group 4: 8 short bars
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+
+      // 5. Tall bar
+      { w: 2, tall: true },
+      // Group 5: 6 short bars
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 3, tall: false },
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1, tall: false },
+
+      // 6. Tall bar (Center)
+      { w: 2.5, tall: true },
+      // Group 6: 7 short bars
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+
+      // 7. Tall bar
+      { w: 2, tall: true },
+      // Group 7: 8 short bars
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+      { w: 3, tall: false },
+      { w: 1, tall: false },
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+
+      // 8. Tall bar
+      { w: 1.5, tall: true },
+      // Group 8: 6 short bars
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1, tall: false },
+
+      // 9. Tall bar
+      { w: 2, tall: true },
+      // Group 9: 7 short bars
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 3, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+
+      // 10. Tall bar
+      { w: 2, tall: true },
+      // Group 10: 6 short bars
+      { w: 1, tall: false },
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+      { w: 2, tall: false },
+      { w: 1, tall: false },
+
+      // 11. Tall bar
+      { w: 2, tall: true },
+      // Group 11: 7 short bars
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1, tall: false },
+      { w: 2.5, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+
+      // 12. Tall bar (Near right)
+      { w: 2, tall: true },
+      // Ending: 5 short bars — ending with a small one!
+      { w: 1, tall: false },
+      { w: 2, tall: false },
+      { w: 1.5, tall: false },
+      { w: 1, tall: false },
+      { w: 1.5, tall: false },
+    ],
+    []
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onClose}
-      className="fixed inset-0 z-[101] flex flex-col items-center"
-      style={{
-        pointerEvents: "auto",
-        background: "rgba(0,0,0,0.6)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        fontFamily: BODY,
-      }}
-    >
-      {/* PRINTER HEAD (fixed at very top) */}
-      <div
-        className="absolute top-0 z-[110] w-full max-w-[420px] shrink-0"
+    <div className="fixed inset-0 z-[101] flex flex-col items-center">
+      {/* 1. Dedicated static backdrop — separated from scroll container to prevent GPU seam artifacts */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="fixed inset-0 pointer-events-auto"
         style={{
-          filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
+          background: "rgba(0,0,0,0.6)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
+      />
+
+      {/* 2. Modal content layer — sits on top, isolated from backdrop filter */}
+      <div 
+        className="fixed inset-0 flex flex-col items-center pointer-events-none z-10"
+        style={{ fontFamily: BODY }}
       >
+        {/* PRINTER HEAD (fixed at very top) */}
         <div
-          className="w-full h-[64px] flex items-center justify-between px-5 relative"
+          className="absolute top-0 z-[110] w-full max-w-[420px] shrink-0 pointer-events-auto"
           style={{
-            background: "#182622",
-            clipPath: zigzagClipPrinter,
+            filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
           }}
         >
-          <div className="flex-1" />
-          <div className="flex items-center gap-2 flex-1 justify-center mb-1">
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, flexShrink: 0 }} />
-            <p
-              style={{
-                fontFamily: HEAD,
-                color: "#FAFAFA",
-                fontSize: 14,
-                letterSpacing: "3px",
-                whiteSpace: "nowrap",
-                opacity: 0.9,
-              }}
-            >
-              CANOPY PRINTER
-            </p>
-          </div>
-          <div className="flex-1 flex justify-end mb-1">
-            <button 
-              onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
-              style={{ background: "rgba(255,255,255,0.15)" }}
-            >
-              <X className="w-4 h-4 text-white" />
-            </button>
+          <div
+            className="w-full h-[64px] flex items-center justify-between px-5 relative"
+            style={{
+              background: "#182622",
+              clipPath: zigzagClipPrinter,
+              WebkitClipPath: zigzagClipPrinter,
+            }}
+          >
+            <div className="flex-1" />
+            <div className="flex items-center gap-2 flex-1 justify-center mb-1">
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, flexShrink: 0 }} />
+              <p
+                style={{
+                  fontFamily: HEAD,
+                  color: "#FAFAFA",
+                  fontSize: 14,
+                  letterSpacing: "3px",
+                  whiteSpace: "nowrap",
+                  opacity: 0.9,
+                }}
+              >
+                CANOPY PRINTER
+              </p>
+            </div>
+            <div className="flex-1 flex justify-end mb-1">
+              <button 
+                onClick={onClose}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
+                style={{ background: "rgba(255,255,255,0.15)" }}
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* SCROLLABLE RECEIPT WRAPPER */}
-      <div 
-        className="w-full max-w-[420px] h-full overflow-y-auto no-scrollbar relative"
-        style={{
-          paddingTop: "32px", // Starts under the printer head
-          paddingBottom: "48px",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        <div
-          className="relative w-full flex flex-col"
+        {/* SCROLLABLE RECEIPT WRAPPER */}
+        <div 
+          className="w-full max-w-[420px] h-full overflow-y-auto no-scrollbar relative pointer-events-auto"
           style={{
-            filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
+            paddingTop: "32px", // Starts under the printer head
+            paddingBottom: "48px",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              onClose();
+            }
           }}
         >
-          {/* TICKET PAPER */}
-          <motion.div
-            key={`receipt-${selectedFlower.id}`}
-            initial={{ y: "-100%" }}
-            animate={{ y: "0%" }}
-            exit={{ y: "-100%" }}
-            transition={{
-              duration: 0.8,
-              ease: [0.16, 1, 0.3, 1], // snappy out
-            }}
+          <div
             className="relative w-full flex flex-col"
             style={{
-              background: "#F9F8F5",
-              clipPath: zigzagClipPaper,
-              paddingBottom: "20px",
-              minHeight: "400px",
+              filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
             }}
-            onClick={(e) => e.stopPropagation()}
           >
+            <motion.div
+              key={`receipt-${selectedFlower.id}`}
+              initial={{ y: "-100%" }}
+              animate={{ y: "0%" }}
+              exit={{ y: "-100%" }}
+              transition={{
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1], // snappy out
+              }}
+              className="relative w-full flex flex-col"
+              style={{
+                background: "#F9F8F5",
+                clipPath: zigzagClipPaper,
+                WebkitClipPath: zigzagClipPaper,
+                paddingBottom: "24px",
+                minHeight: "400px",
+                outline: "none",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
             {/* CONTENT INSIDE PAPER */}
-            <div className="pt-10 px-10 pb-2">
+            <div className="pt-8 px-6 pb-4">
               
               {/* Optional Drawing */}
               {selectedFlower.drawing && (
@@ -365,36 +508,43 @@ export function ReceiptModal({
               )}
 
               {/* Barcode and Branding */}
-              <div className="flex flex-col items-center mt-8 mb-6">
+              <div className="flex flex-col items-center mt-6 mb-4">
+                {/* Full-width uneven barcode */}
                 <div
-                  className="flex gap-[2px] mb-6 h-[60px] w-full justify-center opacity-70"
+                  className="w-full flex items-end justify-between h-[44px] mb-3.5 px-[10px] overflow-hidden"
                 >
-                  {Array.from({ length: 66 }).map((_, i) => (
+                  {barcodeBars.map((bar, i) => (
                     <div
                       key={i}
                       style={{
-                        width: barcodePattern[i % barcodePattern.length],
-                        background: TEAL,
+                        width: `${bar.w}px`,
+                        height: bar.tall ? "44px" : "29px",
+                        backgroundColor: "#9EA29F",
+                        flexShrink: 0,
                       }}
                     />
                   ))}
                 </div>
+
                 <p
                   style={{
                     fontFamily: HEAD,
                     fontStyle: "italic",
                     fontSize: 14,
                     color: "rgba(28,46,42,0.7)",
-                    marginBottom: 8,
+                    marginBottom: 6,
+                    textAlign: "center",
                   }}
                 >
                   Thank you for checking in with yourself.
                 </p>
                 <p
                   style={{
+                    fontFamily: BODY,
                     fontSize: 10,
                     letterSpacing: "0.15em",
                     color: "rgba(28,46,42,0.45)",
+                    textAlign: "center",
                   }}
                 >
                   CANOPY · PAUSE BEFORE YOU PURCHASE
@@ -402,13 +552,14 @@ export function ReceiptModal({
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 justify-between mt-6">
+              <div className="flex items-center gap-2.5 w-full mt-5">
                 <button
                   onClick={() => onDelete(selectedFlower.id)}
                   className="w-[44px] h-[44px] shrink-0 flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
                   style={{
-                    border: `1.5px solid ${RULE}`,
-                    color: "rgba(28,46,42,0.5)",
+                    background: "#FAF9F5",
+                    border: "1px solid #DCD7CE",
+                    color: "#78807A",
                   }}
                 >
                   <Trash2 strokeWidth={1.5} className="w-[18px] h-[18px]" />
@@ -423,27 +574,27 @@ export function ReceiptModal({
                       link.click();
                     }
                   }}
-                  className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-[8px] transition-transform active:scale-95"
+                  className="flex-1 h-[44px] flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
                   style={{
-                    border: `1.5px solid ${RULE}`,
-                    color: TEAL,
+                    background: "#FAF9F5",
+                    border: "1px solid #DCD7CE",
+                    color: "#1C2E2A",
                     fontFamily: HEAD,
-                    fontSize: 14,
+                    fontSize: 14.5,
                     letterSpacing: "0.08em",
                   }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                   SAVE TICKET
                 </button>
 
                 <button
                   onClick={onClose}
-                  className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-[8px] transition-transform active:scale-95"
+                  className="flex-1 h-[44px] flex items-center justify-center rounded-[8px] transition-transform active:scale-95"
                   style={{
                     background: TEAL,
-                    color: "#FAFAFA",
+                    color: "#FFFFFF",
                     fontFamily: HEAD,
-                    fontSize: 14,
+                    fontSize: 14.5,
                     letterSpacing: "0.08em",
                   }}
                 >
@@ -454,6 +605,7 @@ export function ReceiptModal({
           </motion.div>
         </div>
       </div>
-    </motion.div>
+    </div>
+  </div>
   );
 }
