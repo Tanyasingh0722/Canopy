@@ -33,19 +33,6 @@ export function ReceiptModal({
     return `polygon(${pts.join(", ")})`;
   }, []);
 
-  const svgTeethPoints = useMemo(() => {
-    const TEETH = 34;
-    const W = 420;
-    const H = 6;
-    const pts = ["0,0"];
-    for (let i = 0; i < TEETH; i++) {
-      const xMid = (((i + 0.5) / TEETH) * W).toFixed(2);
-      const xEnd = (((i + 1) / TEETH) * W).toFixed(2);
-      pts.push(`${xMid},${H}`);
-      pts.push(`${xEnd},0`);
-    }
-    return pts.join(" ");
-  }, []);
 
   const dateObj = new Date(selectedFlower.date);
   const dateStr = dateObj
@@ -224,7 +211,7 @@ export function ReceiptModal({
       exit={{ opacity: 0 }}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      className="fixed inset-0 z-[101] overflow-y-auto no-scrollbar flex flex-col items-center"
+      className="fixed inset-0 z-[101] overflow-y-auto no-scrollbar flex flex-col items-center py-10 px-4"
       style={{
         background: "rgba(0,0,0,0.6)",
         backdropFilter: "blur(12px)",
@@ -235,90 +222,65 @@ export function ReceiptModal({
         fontFamily: BODY,
       }}
     >
-      {/* Center column holding sticky printer head and paper */}
+      {/* Center column holding paper */}
       <div 
-        className="w-full max-w-[420px] flex flex-col items-center shrink-0 relative pb-12"
+        className="w-full max-w-[420px] flex flex-col items-center shrink-0 relative my-auto"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
       >
-        {/* STICKY PRINTER HEAD (fixed to top of scroll container) */}
         <div
-          className="sticky top-0 w-full shrink-0 z-30 pointer-events-auto"
-        >
-          <div
-            className="w-full h-[58px] flex items-center justify-between px-5 relative"
-            style={{ background: "#182622" }}
-          >
-            <div className="flex-1" />
-            <div className="flex items-center gap-2 flex-1 justify-center mb-1">
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, flexShrink: 0 }} />
-              <p
-                style={{
-                  fontFamily: HEAD,
-                  color: "#FAFAFA",
-                  fontSize: 14,
-                  letterSpacing: "3px",
-                  whiteSpace: "nowrap",
-                  opacity: 0.9,
-                }}
-              >
-                CANOPY PRINTER
-              </p>
-            </div>
-            <div className="flex-1 flex justify-end mb-1">
-              <button 
-                onClick={onClose}
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
-                style={{ background: "rgba(255,255,255,0.15)" }}
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
-            </div>
-          </div>
-          {/* Vector teeth strip: pure SVG vector polygon, zero CSS clip-path */}
-          <svg
-            viewBox="0 0 420 6"
-            className="w-full block"
-            style={{ height: 6, display: "block" }}
-            preserveAspectRatio="none"
-          >
-            <polygon
-              points={svgTeethPoints}
-              fill="#182622"
-            />
-          </svg>
-        </div>
-
-        {/* RECEIPT PAPER CONTAINER (tucked under sticky printer head) */}
-        <div
-          className="relative w-full flex flex-col z-10 pointer-events-auto"
+          className="relative w-full flex flex-col pointer-events-auto"
           style={{
-            marginTop: "-64px", // Tucked cleanly behind the 64px sticky printer head
-            filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.15)) drop-shadow(0 4px 8px rgba(0,0,0,0.05))",
+            filter: "drop-shadow(0 20px 48px rgba(0,0,0,0.32)) drop-shadow(0 4px 12px rgba(0,0,0,0.1))",
           }}
         >
           <motion.div
             key={`receipt-${selectedFlower.id}`}
-            initial={{ y: "-100%" }}
-            animate={{ y: "0%" }}
-            exit={{ y: "-100%" }}
+            initial={{ opacity: 0, y: 35, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 25, scale: 0.96 }}
             transition={{
-              duration: 0.8,
-              ease: [0.16, 1, 0.3, 1], // snappy out
+              type: "spring",
+              damping: 26,
+              stiffness: 300,
             }}
             className="relative w-full flex flex-col"
             style={{
-                background: "#F9F8F5",
-                clipPath: zigzagClipPaper,
-                WebkitClipPath: zigzagClipPaper,
-                paddingBottom: "24px",
-                minHeight: "400px",
-                outline: "none",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+              background: "#F9F8F5",
+              clipPath: zigzagClipPaper,
+              WebkitClipPath: zigzagClipPaper,
+              paddingBottom: "24px",
+              minHeight: "400px",
+              outline: "none",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top header inside paper */}
+            <div className="flex items-center justify-between pt-5 px-6 pb-2">
+              <div className="flex items-center gap-2">
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN }} />
+                <span
+                  style={{
+                    fontFamily: HEAD,
+                    fontSize: 13,
+                    letterSpacing: "0.2em",
+                    color: "rgba(28,46,42,0.45)",
+                  }}
+                >
+                  CANOPY RECEIPT
+                </span>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-7 h-7 rounded-full flex items-center justify-center transition-colors hover:bg-black/10 active:scale-90"
+                style={{ background: "rgba(28,46,42,0.06)" }}
+              >
+                <X className="w-3.5 h-3.5" style={{ color: TEAL }} />
+              </button>
+            </div>
+
             {/* CONTENT INSIDE PAPER */}
-            <div className="pt-20 px-6 pb-4">
+            <div className="pt-4 px-6 pb-4">
               
               {/* Optional Drawing */}
               {selectedFlower.drawing && (
