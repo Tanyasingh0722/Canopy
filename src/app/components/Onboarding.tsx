@@ -64,6 +64,14 @@ function YellowLightBloom({
 }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <svg className="absolute w-0 h-0 pointer-events-none">
+        <defs>
+          <filter id="squiggle">
+            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="50" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
       {/* Expanding Sun Rays */}
       <motion.div
         className="absolute rounded-full pointer-events-none"
@@ -73,6 +81,7 @@ function YellowLightBloom({
           background: "repeating-conic-gradient(from 0deg, rgba(250,204,21,0.15) 0deg 8deg, transparent 8deg 16deg)",
           maskImage: "radial-gradient(circle, black 10%, transparent 60%)",
           WebkitMaskImage: "radial-gradient(circle, black 10%, transparent 60%)",
+          filter: "url(#squiggle)",
         }}
         initial={{ opacity: 0, scale: 0.2, rotate: 0 }}
         animate={
