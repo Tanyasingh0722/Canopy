@@ -64,6 +64,41 @@ function YellowLightBloom({
 }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      {/* Expanding Sun Rays */}
+      <motion.div
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          width: 800,
+          height: 800,
+          background: "repeating-conic-gradient(from 0deg, rgba(250,204,21,0.15) 0deg 8deg, transparent 8deg 16deg)",
+          maskImage: "radial-gradient(circle, black 10%, transparent 60%)",
+          WebkitMaskImage: "radial-gradient(circle, black 10%, transparent 60%)",
+        }}
+        initial={{ opacity: 0, scale: 0.2, rotate: 0 }}
+        animate={
+          blooming
+            ? {
+                opacity: [1, 0.8, 0],
+                scale: [1.2, 2.5, 4],
+                rotate: 120,
+              }
+            : active
+              ? {
+                  opacity: [0, 0.6, 1],
+                  scale: [0.5, 1, 1.2],
+                  rotate: 45,
+                }
+              : { opacity: 0, scale: 0.2, rotate: 0 }
+        }
+        transition={
+          blooming
+            ? { duration: 0.8, ease: "easeOut" }
+            : active
+              ? { duration: 2.2, ease: "linear" }
+              : { duration: 0.35, ease: "easeOut" }
+        }
+      />
+
       {/* Inner vibrant yellow core light */}
       <motion.div
         className="absolute rounded-full pointer-events-none"
